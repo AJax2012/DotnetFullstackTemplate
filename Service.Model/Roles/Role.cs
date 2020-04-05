@@ -1,7 +1,8 @@
-﻿namespace SourceName.Data.Model.Role
+﻿namespace SourceName.Service.Model.Roles
 {
-    public class RoleEntity : EntityWithIntegerId
+    public class Role
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
     }
