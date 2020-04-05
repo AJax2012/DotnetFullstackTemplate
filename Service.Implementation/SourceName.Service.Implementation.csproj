@@ -5,7 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Data\SourceName.Data.csproj" />
     <ProjectReference Include="..\Service.Model\SourceName.Service.Model.csproj" />
+    <ProjectReference Include="..\Service\SourceName.Service.csproj" />
   </ItemGroup>
 
 </Project>

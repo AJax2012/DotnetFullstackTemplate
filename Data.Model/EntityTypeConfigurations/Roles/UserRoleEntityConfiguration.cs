@@ -13,22 +13,22 @@ namespace SourceName.Data.Model.EntityTypeConfigurations.Roles
             builder.Property(x => x.Id)
                 .IsRequired();
 
-            builder.Property(x => x.ApplicationUserId)
+            builder.Property(x => x.UserId)
                 .IsRequired();
 
-            builder.Property(x => x.ApplicationRoleId)
+            builder.Property(x => x.RoleId)
                 .IsRequired();
 
-            builder.HasIndex(x => new { x.ApplicationUserId, x.ApplicationRoleId })
+            builder.HasIndex(x => new { x.UserId, x.RoleId })
                 .IsUnique();
 
             builder.HasOne(x => x.User)
                 .WithMany(x => x.Roles)
-                .HasForeignKey(x => x.ApplicationUserId);
+                .HasForeignKey(x => x.UserId);
 
             builder.HasOne(x => x.Role)
                 .WithMany()
-                .HasForeignKey(x => x.ApplicationRoleId);
+                .HasForeignKey(x => x.RoleId);
         }
     }
 }

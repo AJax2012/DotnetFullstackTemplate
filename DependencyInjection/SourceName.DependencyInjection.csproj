@@ -12,6 +12,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Data.Implementation\SourceName.Data.Implementation.csproj" />
     <ProjectReference Include="..\Data\SourceName.Data.csproj" />
+    <ProjectReference Include="..\Service\SourceName.Service.csproj" />
+    <ProjectReference Include="..\Service.Implementation\SourceName.Service.Implementation.csproj" />
   </ItemGroup>
 
 </Project>

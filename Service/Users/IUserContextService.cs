@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
-namespace SourceName.Service.Implementation.Users
+namespace SourceName.Service.Users
 {
     public interface IUserContextService
     {
-        int? UserId { get; }
+        Guid? UserId { get; }
         List<int> RoleIds { get; }
 
         void SetCurrentUserId(string userId);

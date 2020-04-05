@@ -46,7 +46,7 @@ namespace SourceName.Data.Implementation.User
 
             var rolesToRemove = userEntity.Roles.Where(
                 existingRole =>
-                    !inputUser.Roles.Any(role => existingRole.ApplicationRoleId == role.ApplicationRoleId));
+                    !inputUser.Roles.Any(role => existingRole.RoleId == role.RoleId));
             foreach (var roleToRemove in rolesToRemove)
             {
                 _context.Set<UserRoleEntity>().Remove(roleToRemove);
@@ -54,13 +54,13 @@ namespace SourceName.Data.Implementation.User
 
             var rolesToAdd = inputUser.Roles.Where(
                 newRole =>
-                    !userEntity.Roles.Any(existingRole => existingRole.ApplicationRoleId == newRole.ApplicationRoleId));
+                    !userEntity.Roles.Any(existingRole => existingRole.RoleId == newRole.RoleId));
             foreach (var roleToAdd in rolesToAdd)
             {
                 userEntity.Roles.Add(new UserRoleEntity
                 {
-                    ApplicationUserId = inputUser.Id,
-                    ApplicationRoleId = roleToAdd.ApplicationRoleId
+                    UserId = inputUser.Id,
+                    RoleId = roleToAdd.RoleId
                 });
             }
 

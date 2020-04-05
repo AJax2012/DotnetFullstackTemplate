@@ -1,4 +1,4 @@
-﻿namespace SourceName.Service.Implementation.Users
+﻿namespace SourceName.Service.Users
 {
     public interface IUserPasswordService
     {
