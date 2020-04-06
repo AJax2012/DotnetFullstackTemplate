@@ -10,6 +10,11 @@ namespace SourceName.Mapping
     {
         public ServiceMappingProfile()
         {
+            // Service -> Data
+
+            // Data -> Service
+
+            // Two way mappings
             CreateMap<RoleEntity, Role>().ReverseMap();
             CreateMap<UserEntity, User>().ReverseMap();
             CreateMap<UserRoleEntity, UserRole>().ReverseMap();

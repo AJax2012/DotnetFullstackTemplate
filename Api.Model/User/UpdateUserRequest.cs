@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace SourceName.Api.Model.User
@@ -6,7 +7,7 @@ namespace SourceName.Api.Model.User
     public class UpdateUserRequest
     {
         [Required]
-        public int? Id { get; set; }
+        public Guid? Id { get; set; }
 
         [Required]
         [MaxLength(50)]

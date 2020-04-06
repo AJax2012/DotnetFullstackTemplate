@@ -3,6 +3,6 @@
     public enum Roles
     {
         Administrator = 1,
-        User
+        User = 2
     }
 }
