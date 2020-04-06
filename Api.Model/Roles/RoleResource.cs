@@ -1,6 +1,6 @@
 ﻿namespace SourceName.Api.Model.Roles
 {
-    public class ApplicationRoleResource
+    public class RoleResource
     {
         public int Id { get; set; }
         public string Name { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace SourceName.Api.Model.User
 {
-    public class ApplicationUserCapabilitiesResource
+    public class UserCapabilitiesResource
     {
         public bool CanManageUsers { get; set; }
     }

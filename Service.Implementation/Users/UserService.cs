@@ -43,7 +43,7 @@ namespace SourceName.Service.Implementation.Users
                 new UserRoleEntity
                 {
                     UserId = userEntity.Id,
-                    RoleId = r.ApplicationRoleId
+                    RoleId = r.RoleId
                 }).ToList();
 
             var result = _userRepository.Insert(userEntity);
@@ -91,7 +91,7 @@ namespace SourceName.Service.Implementation.Users
             userEntity.Roles = user.Roles.Select(role => new UserRoleEntity
             {
                 UserId = user.Id,
-                RoleId = role.ApplicationRoleId
+                RoleId = role.RoleId
             }).ToList();
 
             return _mapper.Map<User>(_userRepository.Update(userEntity));

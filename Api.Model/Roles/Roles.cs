@@ -1,6 +1,6 @@
 ﻿namespace SourceName.Api.Model.Roles
 {
-    public enum ApplicationRoles
+    public enum Roles
     {
         Administrator = 1,
         User

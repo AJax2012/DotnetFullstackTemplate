@@ -35,7 +35,7 @@ namespace SourceName.Service.Implementation.Users
             return user.Roles.Any(r =>
                 RolesCanManageUsers
                     .Select(r => (int)r)
-                    .Contains(r.ApplicationRoleId));
+                    .Contains(r.RoleId));
         }
     }
 }
