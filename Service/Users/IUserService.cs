@@ -13,5 +13,6 @@ namespace SourceName.Service.Users
         User GetByUsername(string username);
         User GetForAuthentication(string username);
         User UpdateUser(User user);
+        User UpdateUserPassword(Guid? id, string password);
     }
 }

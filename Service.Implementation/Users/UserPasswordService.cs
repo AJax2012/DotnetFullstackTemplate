@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using SourceName.Service.Users;
 
 namespace SourceName.Service.Implementation.Users
@@ -7,16 +8,7 @@ namespace SourceName.Service.Implementation.Users
     {
         public void CreateHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
-            if (password == null)
-            {
-                throw new ArgumentNullException(nameof(password));
-            }
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                throw new ArgumentException("Value cannot be empty or whitespace", nameof(password));
-            }
-
+            ValidatePassword(password);
             using (var hmac = new System.Security.Cryptography.HMACSHA512())
             {
                 passwordSalt = hmac.Key;
@@ -54,6 +46,32 @@ namespace SourceName.Service.Implementation.Users
             }
 
             return true;
+        }
+
+        private void ValidatePassword(string password)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                throw new ArgumentException("Value cannot be empty or whitespace", nameof(password));
+            }
+
+            var atLeastOneLetterAndNumber = new Regex(@"[A-Za-z]+\d+.*");
+            if (!atLeastOneLetterAndNumber.IsMatch(password))
+            {
+                throw new ArgumentException("Password must contain at least one letter and one number", nameof(password));
+            }
+
+            var atLeastOneUpperAndLower = new Regex(@"(.*[a-z].*)(.*[A-Z].*)");
+            if (!atLeastOneUpperAndLower.IsMatch(password))
+            {
+                throw new ArgumentException("Password must contain at least one upper case and lower case letter", nameof(password));
+            }
+
+            var repeatingCharacters = new Regex(@"(?!>\w)(\w+?)\1+(?!<\w)");
+            if (repeatingCharacters.IsMatch(password))
+            {
+                throw new ArgumentException("Password may not have repeating characters", nameof(password));
+            }
         }
     }
 }

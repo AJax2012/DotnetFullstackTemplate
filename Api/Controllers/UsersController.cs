@@ -92,5 +92,12 @@ namespace SourceName.Api.Controllers
             user.Id = id;
             return Ok(_mapper.Map<UserResource>(_userService.UpdateUser(user)));
         }
+
+        [HttpPatch("{id}/password")]
+        public IActionResult UpdatePassword([FromRoute] Guid id, [FromBody] UpdatePasswordRequest request)
+        {
+            return Ok(_mapper.Map<UserResource>(
+                _userService.UpdateUserPassword(id, request.Password)));
+        }
     }
 }

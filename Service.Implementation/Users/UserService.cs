@@ -27,6 +27,7 @@ namespace SourceName.Service.Implementation.Users
         {
             byte[] passwordHash;
             byte[] passwordSalt;
+
             _userPasswordService.CreateHash(user.Password, out passwordHash, out passwordSalt);
 
             var userEntity = new UserEntity
@@ -95,6 +96,16 @@ namespace SourceName.Service.Implementation.Users
             }).ToList();
 
             return _mapper.Map<User>(_userRepository.Update(userEntity));
+        }
+
+        public User UpdateUserPassword(Guid? id, string password)
+        {
+            byte[] passwordHash;
+            byte[] passwordSalt;
+
+            _userPasswordService.CreateHash(password, out passwordHash, out passwordSalt);
+            var userEntity = _userRepository.UpdatePassword(id, passwordHash, passwordSalt);
+            return _mapper.Map<User>(userEntity);
         }
     }
 }

@@ -71,5 +71,16 @@ namespace SourceName.Data.Implementation.User
             _context.SaveChanges();
             return userEntity;
         }
+
+        public UserEntity UpdatePassword(Guid? id, byte[] passwordHash, byte[] passwordSalt)
+        {
+            var userEntity = _context.Users.Single(user => user.Id == id);
+
+            userEntity.PasswordHash = passwordHash;
+            userEntity.PasswordSalt = passwordSalt;
+
+            _context.SaveChanges();
+            return userEntity;
+        }
     }
 }
