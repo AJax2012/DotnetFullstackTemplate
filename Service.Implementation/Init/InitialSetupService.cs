@@ -61,7 +61,7 @@ namespace SourceName.Service.Implementation.Init
                 return;
             }
 
-        //TODO: Eventually, log if the amount of Roles in the DB != amount of roles in Roles Enum
+            //TODO: Eventually, log if the amount of Roles in the DB != amount of roles in Roles Enum
 
             foreach (var role in _roles)
             {

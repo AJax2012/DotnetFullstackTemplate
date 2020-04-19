@@ -9,7 +9,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
 using SourceName.DependencyInjection;
-using SourceName.DependencyInjection.Modules;
 using SourceName.Mapping;
 using SourceName.Service.Init;
 using SourceName.Api.Core.Authentication;
@@ -78,11 +77,8 @@ namespace SourceName.Api
                 };
             });
 
-            new List<IDependencyInjectionModule>
-            {
-                new ServiceModule(),
-                new DataModule(Configuration.GetConnectionString("SourceNameDatabase"))
-            }.ForEach(module => module.RegisterDependencies(services));
+            services.AddServiceLayer();
+            services.AddDataLayer(Configuration.GetConnectionString("SourceNameDatabase"));
 
             services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
             services.AddScoped<UserContextFilter>();

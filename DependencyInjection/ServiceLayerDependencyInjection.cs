@@ -4,11 +4,11 @@ using SourceName.Service.Implementation.Users;
 using SourceName.Service.Init;
 using SourceName.Service.Users;
 
-namespace SourceName.DependencyInjection.Modules
+namespace SourceName.DependencyInjection
 {
-    public class ServiceModule : IDependencyInjectionModule
+    public static class ServiceLayerDependencyInjection
     {
-        public void RegisterDependencies(IServiceCollection services)
+        public static void AddServiceLayer(this IServiceCollection services)
         {
             services.AddScoped<IInitialSetupService, InitialSetupService>();
             services.AddScoped<IUserCapabilitiesService, UserCapabilitiesService>();
