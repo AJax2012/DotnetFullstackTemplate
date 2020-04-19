@@ -7,6 +7,10 @@
   <ItemGroup>
     <Compile Remove="Migrations\20200406001801_UpdateNamesWithApplication.cs" />
     <Compile Remove="Migrations\20200406001801_UpdateNamesWithApplication.Designer.cs" />
+    <Compile Remove="Migrations\20200418202625_UpdateRoles.cs" />
+    <Compile Remove="Migrations\20200418202625_UpdateRoles.Designer.cs" />
+    <Compile Remove="Migrations\20200418204726_SetRoleValueGeneratedOptionToFalse.cs" />
+    <Compile Remove="Migrations\20200418204726_SetRoleValueGeneratedOptionToFalse.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

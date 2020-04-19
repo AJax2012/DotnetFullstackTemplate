@@ -61,7 +61,7 @@ namespace SourceName.Service.Implementation.Users
                 throw new ArgumentException("Password must contain at least one letter and one number", nameof(password));
             }
 
-            var atLeastOneUpperAndLower = new Regex(@"(.*[a-z].*)(.*[A-Z].*)");
+            var atLeastOneUpperAndLower = new Regex(@"(?=.*[a-z])(?=.*[A-Z]).*");
             if (!atLeastOneUpperAndLower.IsMatch(password))
             {
                 throw new ArgumentException("Password must contain at least one upper case and lower case letter", nameof(password));

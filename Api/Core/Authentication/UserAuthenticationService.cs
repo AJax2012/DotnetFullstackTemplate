@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 using SourceName.Api.Model.Configuration;
@@ -19,11 +20,11 @@ namespace SourceName.Api.Core.Authentication
         private readonly IUserService _userService;
 
         public UserAuthenticationService(
-            SecretsConfiguration secretsConfiguration,
+            IOptionsSnapshot<SecretsConfiguration> secretsConfiguration,
             IUserPasswordService userPasswordService,
             IUserService userService)
         {
-            _secretsConfiguration = secretsConfiguration;
+            _secretsConfiguration = secretsConfiguration.Value;
             _userPasswordService = userPasswordService;
             _userService = userService;
         }

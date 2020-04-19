@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-
+using SourceName.Data.Implementation.Role;
 using SourceName.Data.Implementation.User;
 using SourceName.Data.Model;
+using SourceName.Data.Roles;
 using SourceName.Data.Users;
 
 namespace SourceName.DependencyInjection.Modules
@@ -21,6 +22,7 @@ namespace SourceName.DependencyInjection.Modules
             services.AddDbContext<EntityContext>(options => options.UseSqlServer(_connectionString));
 
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
         }
     }
 }

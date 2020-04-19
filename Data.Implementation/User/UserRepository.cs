@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using SourceName.Data.Implementation.GenericRepositories;
 using SourceName.Data.Model;
@@ -33,8 +31,8 @@ namespace SourceName.Data.Implementation.User
         public UserEntity GetByUsernameWithRoles(string username)
         {
             return _context.Users
-                .Include(user => user.Roles)
-                    .ThenInclude(role => role.Role)
+                .Include(u => u.Roles)
+                .Include("Roles.Role")
                 .SingleOrDefault(user => user.Username == username);
         }
 
@@ -42,6 +40,7 @@ namespace SourceName.Data.Implementation.User
         {
             var userEntity = _context.Set<UserEntity>()
                 .Include(u => u.Roles)
+                .Include("Roles.Role")
                 .Single(u => u.Id == inputUser.Id);
 
             var rolesToRemove = userEntity.Roles.Where(

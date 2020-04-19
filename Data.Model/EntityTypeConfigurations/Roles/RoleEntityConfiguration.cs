@@ -11,7 +11,8 @@ namespace SourceName.Data.Model.EntityTypeConfigurations.Roles
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Id)
-                .IsRequired();
+                .IsRequired()
+                .ValueGeneratedNever();
 
             builder.Property(x => x.Name)
                 .HasMaxLength(50)
