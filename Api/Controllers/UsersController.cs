@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SourceName.Api.Core.Authentication;
 using SourceName.Api.Model.User;
 using SourceName.Service.Model.Users;
@@ -20,14 +21,21 @@ namespace SourceName.Api.Controllers
         private readonly IUserCapabilitiesService _userCapabilitiesService;
         private readonly IUserContextService _userContextService;
         private readonly IUserService _userService;
+        private readonly ILogger<UsersController> _logger;
 
-        public UsersController(IMapper mapper, IUserAuthenticationService userAuthenticationService, IUserCapabilitiesService userCapabilitiesService, IUserContextService userContextService, IUserService userService)
+        public UsersController(IMapper mapper,
+                               IUserAuthenticationService userAuthenticationService,
+                               IUserCapabilitiesService userCapabilitiesService,
+                               IUserContextService userContextService,
+                               IUserService userService,
+                               ILogger<UsersController> logger)
         {
             _mapper = mapper;
             _userAuthenticationService = userAuthenticationService;
             _userCapabilitiesService = userCapabilitiesService;
             _userContextService = userContextService;
             _userService = userService;
+            _logger = logger;
         }
 
         [AllowAnonymous]
@@ -37,6 +45,7 @@ namespace SourceName.Api.Controllers
             var token = _userAuthenticationService.Authenticate(request.Username, request.Password);
             if (string.IsNullOrWhiteSpace(token))
             {
+                _logger.LogInformation($"Invalid user login. Username: {request.Username}");
                 return Unauthorized();
             }
 
@@ -54,12 +63,14 @@ namespace SourceName.Api.Controllers
         public IActionResult Register([FromBody] CreateUserRequest request)
         {
             var newUser = _userService.CreateUser(_mapper.Map<User>(request));
+            _logger.LogInformation($"New User being created: {newUser.Id}");
             return CreatedAtAction(nameof(Authenticate), _mapper.Map<UserResource>(newUser));
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteUser([FromRoute] Guid id)
         {
+            _logger.LogInformation($"User {id} is being deleted.");
             _userService.DeleteUser(id);
             return NoContent();
         }
@@ -88,6 +99,7 @@ namespace SourceName.Api.Controllers
         [HttpPut("{id}")]
         public IActionResult UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserRequest request)
         {
+            _logger.LogInformation($"User is being updated: {id}");
             var user = _mapper.Map<User>(request);
             user.Id = id;
             return Ok(_mapper.Map<UserResource>(_userService.UpdateUser(user)));
@@ -96,6 +108,7 @@ namespace SourceName.Api.Controllers
         [HttpPatch("{id}/password")]
         public IActionResult UpdatePassword([FromRoute] Guid id, [FromBody] UpdatePasswordRequest request)
         {
+            _logger.LogInformation($"User {id} is updating their password.");
             return Ok(_mapper.Map<UserResource>(
                 _userService.UpdateUserPassword(id, request.Password)));
         }

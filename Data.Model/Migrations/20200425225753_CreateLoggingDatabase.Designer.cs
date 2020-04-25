@@ -10,8 +10,8 @@ using SourceName.Data.Model;
 namespace SourceName.Data.Model.Migrations
 {
     [DbContext(typeof(EntityContext))]
-    [Migration("20200419223837_CreateLoggingTable")]
-    partial class CreateLoggingTable
+    [Migration("20200425225753_CreateLoggingDatabase")]
+    partial class CreateLoggingDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

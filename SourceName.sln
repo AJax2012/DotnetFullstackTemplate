@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceName.Data.Implementat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceName.Service.Implementation", "Service.Implementation\SourceName.Service.Implementation.csproj", "{DBB5F5E2-6D9E-44AD-9FD6-F3AA34FD2772}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SourceName.Service.Implementation.Test", "Service.Implementation.Test\SourceName.Service.Implementation.Test.csproj", "{0C2A8A2F-3BF0-42E4-A6CC-FF1A78DD1064}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceName.Service.Implementation.Test", "Service.Implementation.Test\SourceName.Service.Implementation.Test.csproj", "{0C2A8A2F-3BF0-42E4-A6CC-FF1A78DD1064}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
