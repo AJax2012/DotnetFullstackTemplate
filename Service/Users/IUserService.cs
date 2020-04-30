@@ -7,12 +7,12 @@ namespace SourceName.Service.Users
     public interface IUserService
     {
         User CreateUser(User user);
-        void DeleteUser(Guid id);
+        void DeleteUser(int id);
         List<User> GetAll();
-        User GetById(Guid id);
+        User GetById(int id);
         User GetByUsername(string username);
         User GetForAuthentication(string username);
         User UpdateUser(User user);
-        User UpdateUserPassword(Guid? id, string password);
+        User UpdateUserPassword(int? id, string password);
     }
 }

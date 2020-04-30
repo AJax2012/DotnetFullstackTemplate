@@ -9,18 +9,18 @@ using SourceName.Data.Users;
 
 namespace SourceName.Data.Implementation.User
 {
-    public class UserRepository : GuidRepositoryBase<UserEntity>, IUserRepository
+    public class UserRepository : IntegerRepositoryBase<UserEntity>, IUserRepository
     {
         public UserRepository(EntityContext context) : base(context) {}
 
-        public override void Delete(Guid id)
+        public override void Delete(int id)
         {
             var entity = _context.Set<UserEntity>().Single(u => u.Id == id);
             entity.IsActive = false;
             _context.SaveChanges();
         }
 
-        public override UserEntity GetById(Guid id)
+        public override UserEntity GetById(int id)
         {
             return _context.Set<UserEntity>()
                 .Include(u => u.Roles)
@@ -71,7 +71,7 @@ namespace SourceName.Data.Implementation.User
             return userEntity;
         }
 
-        public UserEntity UpdatePassword(Guid? id, byte[] passwordHash, byte[] passwordSalt)
+        public UserEntity UpdatePassword(int? id, byte[] passwordHash, byte[] passwordSalt)
         {
             var userEntity = _context.Users.Single(user => user.Id == id);
 

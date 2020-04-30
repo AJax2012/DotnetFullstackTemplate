@@ -68,7 +68,7 @@ namespace SourceName.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteUser([FromRoute] Guid id)
+        public IActionResult DeleteUser([FromRoute] int id)
         {
             _logger.LogInformation($"User {id} is being deleted.");
             _userService.DeleteUser(id);
@@ -82,7 +82,7 @@ namespace SourceName.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById([FromRoute] Guid id)
+        public IActionResult GetById([FromRoute] int id)
         {
             var user = _userService.GetById(id);
             return Ok(_mapper.Map<UserResource>(user));
@@ -97,7 +97,7 @@ namespace SourceName.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserRequest request)
+        public IActionResult UpdateUser([FromRoute] int id, [FromBody] UpdateUserRequest request)
         {
             _logger.LogInformation($"User is being updated: {id}");
             var user = _mapper.Map<User>(request);
@@ -106,7 +106,7 @@ namespace SourceName.Api.Controllers
         }
 
         [HttpPatch("{id}/password")]
-        public IActionResult UpdatePassword([FromRoute] Guid id, [FromBody] UpdatePasswordRequest request)
+        public IActionResult UpdatePassword([FromRoute] int id, [FromBody] UpdatePasswordRequest request)
         {
             _logger.LogInformation($"User {id} is updating their password.");
             return Ok(_mapper.Map<UserResource>(

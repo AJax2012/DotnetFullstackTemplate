@@ -21,7 +21,7 @@ namespace SourceName.Service.Implementation.Users
             _userService = userService;
         }
 
-        public UserCapabilities GetUserCapabilities(Guid userId)
+        public UserCapabilities GetUserCapabilities(int userId)
         {
             var user = _userService.GetById(userId);
             return new UserCapabilities

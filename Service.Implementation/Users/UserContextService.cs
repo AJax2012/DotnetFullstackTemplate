@@ -7,9 +7,9 @@ namespace SourceName.Service.Implementation.Users
 {
     public class UserContextService : IUserContextService
     {
-        private Guid? _userId;
+        private int? _userId;
 
-        public Guid? UserId
+        public int? UserId
         {
             get
             {
@@ -22,8 +22,8 @@ namespace SourceName.Service.Implementation.Users
         public void SetCurrentUserId(string userId)
         {
             _userId = !string.IsNullOrWhiteSpace(userId)
-                ? Guid.Parse(userId)
-                : (Guid?)null;
+                ? int.Parse(userId)
+                : (int?)null;
         }
 
         public void SetUserRoleIds(string roleIds)

@@ -7,7 +7,7 @@ namespace SourceName.Api.Model.User
     public class UpdateUserRequest
     {
         [Required]
-        public Guid? Id { get; set; }
+        public int? Id { get; set; }
 
         [Required]
         [MaxLength(50)]

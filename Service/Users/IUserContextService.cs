@@ -5,7 +5,7 @@ namespace SourceName.Service.Users
 {
     public interface IUserContextService
     {
-        Guid? UserId { get; }
+        int? UserId { get; }
         List<int> RoleIds { get; }
 
         void SetCurrentUserId(string userId);

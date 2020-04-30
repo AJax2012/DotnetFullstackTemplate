@@ -4,7 +4,7 @@ using SourceName.Data.Model.Role;
 
 namespace SourceName.Data.Model.User
 {
-    public class UserEntity : EntityWithGuidId
+    public class UserEntity : EntityWithIntegerId
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

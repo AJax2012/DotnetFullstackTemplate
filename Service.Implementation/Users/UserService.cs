@@ -51,7 +51,7 @@ namespace SourceName.Service.Implementation.Users
             return _mapper.Map<User>(result);
         }
 
-        public void DeleteUser(Guid id)
+        public void DeleteUser(int id)
         {
             _userRepository.Delete(id);
         }
@@ -65,7 +65,7 @@ namespace SourceName.Service.Implementation.Users
             return _mapper.Map<List<User>>(userEntities);
         }
 
-        public User GetById(Guid id)
+        public User GetById(int id)
         {
             var userEntity = _userRepository.GetById(id);
             return _mapper.Map<User>(userEntity);
@@ -98,7 +98,7 @@ namespace SourceName.Service.Implementation.Users
             return _mapper.Map<User>(_userRepository.Update(userEntity));
         }
 
-        public User UpdateUserPassword(Guid? id, string password)
+        public User UpdateUserPassword(int? id, string password)
         {
             byte[] passwordHash;
             byte[] passwordSalt;

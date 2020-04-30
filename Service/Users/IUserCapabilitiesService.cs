@@ -5,6 +5,6 @@ namespace SourceName.Service.Users
 {
     public interface IUserCapabilitiesService
     {
-        UserCapabilities GetUserCapabilities(Guid userId);
+        UserCapabilities GetUserCapabilities(int userId);
     }
 }
