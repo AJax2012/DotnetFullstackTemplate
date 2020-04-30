@@ -129,7 +129,8 @@ namespace SourceName.Api.Test
         [Test]
         public void Register_Returns_UserResource()
         {
-            var resource = new UserResource();
+            var userId = 1;
+            var resource = new UserResource { Id = userId };
 
             mockUserService.Setup(s => s.CreateUser(It.IsAny<User>())).Returns(new User());
 
@@ -189,7 +190,8 @@ namespace SourceName.Api.Test
         [Test]
         public void GetAll_Returns_UserResourceList()
         {
-            var resource = new List<UserResource> { new UserResource() };
+            var userId = 1;
+            var resource = new List<UserResource> { new UserResource { Id = userId } };
 
             mockUserService.Setup(s => s.GetAll()).Returns(new List<User>());
 
@@ -222,7 +224,8 @@ namespace SourceName.Api.Test
         [Test]
         public void GetById_Returns_UserResource()
         {
-            var resource = new UserResource();
+            var userId = 1;
+            var resource = new UserResource { Id = userId };
 
             mockUserService.Setup(s => s.GetById(It.IsAny<int>())).Returns(new User());
 
@@ -257,7 +260,7 @@ namespace SourceName.Api.Test
         [Test]
         public void GetUserCapabilities_Returns_UserCapabilities()
         {
-            var resource = new UserCapabilitiesResource();
+            var resource = new UserCapabilitiesResource { CanManageUsers = true };
 
             mockUserContextService.Setup(s => s.UserId).Returns(new int());
             mockUserCapabilitiesService.Setup(s => s.GetUserCapabilities(It.IsAny<int>())).Returns(new UserCapabilities());
@@ -294,7 +297,8 @@ namespace SourceName.Api.Test
         [Test]
         public void UpdateUser_Returns_UserResource()
         {
-            var resource = new UserResource();
+            var userId = 1;
+            var resource = new UserResource { Id = userId };
 
             mockMapper.Setup(m => m.Map<User>(It.IsAny<UpdateUserRequest>())).Returns(new User());
             mockUserService.Setup(s => s.UpdateUser(It.IsAny<User>())).Returns(new User());
@@ -328,7 +332,8 @@ namespace SourceName.Api.Test
         [Test]
         public void UpdatePassword_Returns_UserResource()
         {
-            var resource = new UserResource();
+            var userId = 1;
+            var resource = new UserResource { Id = userId };
 
             mockUserService.Setup(s => s.UpdateUserPassword(It.IsAny<int>(), It.IsAny<string>())).Returns(new User());
             mockMapper.Setup(m => m.Map<UserResource>(It.IsAny<User>())).Returns(resource);
