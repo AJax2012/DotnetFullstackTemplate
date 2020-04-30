@@ -24,7 +24,7 @@ namespace SourceName.Api.Core.Filters
                 var userIdClaim = claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Name);
                 _userContextService.SetCurrentUserId(userIdClaim?.Value);
 
-                var claimRoleIds = claimsIdentity.Claims.SingleOrDefault(c => c.Type == SourceNameClaimTypes.ApplicationRoles);
+                var claimRoleIds = claimsIdentity.Claims.SingleOrDefault(c => c.Type == SourceNameClaimTypes.Roles);
                 _userContextService.SetUserRoleIds(claimRoleIds?.Value);
             }
 

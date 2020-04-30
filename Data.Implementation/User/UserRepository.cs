@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using SourceName.Data.Implementation.GenericRepositories;
 using SourceName.Data.Model;
@@ -18,6 +20,21 @@ namespace SourceName.Data.Implementation.User
             var entity = _context.Set<UserEntity>().Single(u => u.Id == id);
             entity.IsActive = false;
             _context.SaveChanges();
+        }
+
+        public override IEnumerable<UserEntity> Get(Expression<Func<UserEntity, bool>> filter = null)
+        {
+            var query = _context.Set<UserEntity>()
+                .Include(u => u.Roles)
+                .Include("Roles.Role")
+                .AsQueryable();
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            return query;
         }
 
         public override UserEntity GetById(int id)

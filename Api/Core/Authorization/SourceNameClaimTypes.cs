@@ -2,6 +2,6 @@
 {
     public static class SourceNameClaimTypes
     {
-        public static string ApplicationRoles { get; set; } = "SourceName_ApplicationRoles";
+        public static string Roles { get; set; } = "SourceName_Roles";
     }
 }

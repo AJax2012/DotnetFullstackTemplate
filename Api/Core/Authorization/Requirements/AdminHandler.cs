@@ -11,7 +11,7 @@ namespace SourceName.Api.Core.Authorization.Requirements
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, AdminRequirement requirement)
         {
             var rolesClaim = context.User.Claims
-                .SingleOrDefault(c => c.Type == SourceNameClaimTypes.ApplicationRoles);
+                .SingleOrDefault(c => c.Type == SourceNameClaimTypes.Roles);
 
             if (rolesClaim?.Value?
                 .Split(",")?
