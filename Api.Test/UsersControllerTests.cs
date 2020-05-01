@@ -42,23 +42,28 @@ namespace SourceName.Api.Test
         [Test]
         public void Authenticate_Calls_UserAuthenticationService_Authenticate()
         {
-            usersController.Authenticate(new AuthenticateUserRequest());
+            var request = new AuthenticateUserRequest { Username = "test", Password = "Admin1!" }; // password is the same as the default admin password
+            usersController.Authenticate(request);
             mockUserAuthenticationService.Verify(s => 
-                s.Authenticate(It.IsAny<string>(), It.IsAny<string>()), 
+                s.Authenticate(
+                    It.Is<string>(username => username == request.Username), 
+                    It.Is<string>(password => password == request.Password)),
                 Times.Once);
         }
 
         [Test]
         public void Authenticate_Calls_UserService_GetUserById()
         {
+            var request = new AuthenticateUserRequest { Username = "test", Password = "Admin1!" }; // password is the same as the default admin password
+
             mockUserAuthenticationService.Setup(s => s.Authenticate(It.IsAny<string>(), It.IsAny<string>())).Returns(() => "token");
 
             mockUserService.Setup(s => s.GetByUsername(It.IsAny<string>())).Returns(new User());
 
-            usersController.Authenticate(new AuthenticateUserRequest());
+            usersController.Authenticate(request);
 
             mockUserService.Verify(s =>
-                s.GetByUsername(It.IsAny<string>()),
+                s.GetByUsername(It.Is<string>(username => username == request.Username)),
                 Times.Once);
         }
 
@@ -108,11 +113,13 @@ namespace SourceName.Api.Test
         [Test]
         public void Register_Calls_UserService_CreateUser()
         {
-            mockUserService.Setup(s => s.CreateUser(It.IsAny<User>())).Returns(new User());
+            var username = "test";
 
-            usersController.Register(new CreateUserRequest());
+            mockUserService.Setup(s => s.CreateUser(It.IsAny<User>())).Returns(new User { Id = 1 }); // needed for logging statement
 
-            mockUserService.Verify(s => s.CreateUser(It.IsAny<User>()), Times.Once);
+            usersController.Register(new CreateUserRequest { Username = username });
+
+            mockUserService.Verify(s => s.CreateUser(It.Is<User>(user => user.Username == username)), Times.Once);
         }
 
         [Test]

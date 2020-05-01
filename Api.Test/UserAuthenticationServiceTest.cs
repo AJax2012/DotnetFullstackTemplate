@@ -62,7 +62,7 @@ namespace SourceName.Api.Test
         [Test]
         [TestCase(true)]
         [TestCase(false)]
-        public void Authenticate_Returns_String_IfValidated_Null_IfInvalid(bool isValid)
+        public void Authenticate_Returns_NotNull_Value_IfValidated_Null_IfInvalid(bool isValid)
         {
             var username = "username";
             var password = "password";

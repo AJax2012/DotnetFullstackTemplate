@@ -17,7 +17,7 @@ namespace SourceName.Api.Model.User
 
         [Required]
         [MaxLength(50)]
-        public string UserName { get; set; }
+        public string Username { get; set; }
 
         [Required]
         [StringLength(20, MinimumLength = 6, ErrorMessage = "Password must be between 6 and 20 characters in length")]
