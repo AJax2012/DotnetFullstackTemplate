@@ -5,9 +5,6 @@ using SourceName.Api.Core.Authentication;
 using SourceName.Api.Model.Configuration;
 using SourceName.Service.Model.Users;
 using SourceName.Service.Users;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SourceName.Api.Test
 {
@@ -57,6 +54,34 @@ namespace SourceName.Api.Test
             mockUserPasswordService.Verify(s =>
                 s.ValidateHash(It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<byte[]>()),
                 Times.Once);
+        }
+
+        [Test]
+        public void Authenticate_Returns_Null_Value_If_User_Not_Found()
+        {
+            var username = "username";
+            var password = "password";
+
+            var result = userAuthenticationService.Authenticate(username, password);
+
+            Assert.IsNull(result);
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Authenticate_Returns_NotNull_Value_If_User_IsActive_Null_If_User_Not_IsActive(bool isActive)
+        {
+            var username = "username";
+            var password = "password";
+
+            mockUserService.Setup(s => s.GetForAuthentication(It.IsAny<string>())).Returns(new User { IsActive = isActive });
+            mockUserPasswordService.Setup(s => s.ValidateHash(It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<byte[]>())).Returns(true);
+
+            var result = userAuthenticationService.Authenticate(username, password);
+            var wasUserAuthenticated = result != null;
+
+            Assert.AreEqual(wasUserAuthenticated, isActive);
         }
 
         [Test]
