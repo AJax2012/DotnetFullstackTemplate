@@ -8,7 +8,6 @@ using SourceName.Api.Core.Authentication;
 using SourceName.Api.Model.User;
 using SourceName.Service.Model.Users;
 using SourceName.Service.Users;
-using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -57,7 +56,6 @@ namespace SourceName.Api.Test
             var request = new AuthenticateUserRequest { Username = "test", Password = "Admin1!" }; // password is the same as the default admin password
 
             mockUserAuthenticationService.Setup(s => s.Authenticate(It.IsAny<string>(), It.IsAny<string>())).Returns(() => "token");
-
             mockUserService.Setup(s => s.GetByUsername(It.IsAny<string>())).Returns(new User());
 
             usersController.Authenticate(request);
@@ -71,7 +69,6 @@ namespace SourceName.Api.Test
         public void Authenticate_Returns_Ok_Object_Result()
         {
             mockUserAuthenticationService.Setup(s => s.Authenticate(It.IsAny<string>(), It.IsAny<string>())).Returns(() => "token");
-
             mockUserService.Setup(s => s.GetByUsername(It.IsAny<string>())).Returns(new User());
 
             var result = usersController.Authenticate(new AuthenticateUserRequest()) as OkObjectResult;
@@ -111,20 +108,65 @@ namespace SourceName.Api.Test
         }
 
         [Test]
-        public void Register_Calls_UserService_CreateUser()
+        public void Authenticate_Returns_Unauthorized_If_Invalid_Login()
+        {
+            var result = usersController.Authenticate(new AuthenticateUserRequest()) as UnauthorizedResult;
+            Assert.AreEqual(401, result.StatusCode);
+        }
+
+        [Test]
+        public void Register_Calls_UserService_GetByUsername()
         {
             var username = "test";
 
-            mockUserService.Setup(s => s.CreateUser(It.IsAny<User>())).Returns(new User { Id = 1 }); // needed for logging statement
-
             usersController.Register(new CreateUserRequest { Username = username });
 
-            mockUserService.Verify(s => s.CreateUser(It.Is<User>(user => user.Username == username)), Times.Once);
+            mockUserService.Verify(s => s.GetByUsername(username), Times.Once);
+        }
+
+        [Test]
+        public void Register_Calls_Automapper_Map_To_User()
+        {
+            var request = new CreateUserRequest();
+
+            mockUserService.Setup(s => s.GetByUsername(It.IsAny<string>())).Returns(new User());
+            mockUserService.Setup(s => s.CreateUser(It.IsAny<User>())).Returns(new User());
+            usersController.Register(request);
+
+            mockMapper.Verify(m => m.Map<User>(It.Is<CreateUserRequest>(r => r == request)));
+        }
+
+        [Test]
+        public void Register_Calls_UserService_CreateUser()
+        {
+            var user = new User();
+
+            mockUserService.Setup(s => s.GetByUsername(It.IsAny<string>())).Returns(new User());
+            mockMapper.Setup(m => m.Map<User>(It.IsAny<CreateUserRequest>())).Returns(user);
+            mockUserService.Setup(s => s.CreateUser(It.IsAny<User>())).Returns(new User());
+
+            usersController.Register(new CreateUserRequest());
+
+            mockUserService.Verify(s => s.CreateUser(It.Is<User>(u => u == user)), Times.Once);
+        }
+
+        [Test]
+        public void Register_Calls_Automapper_Map_To_UserResource()
+        {
+            var request = new User();
+
+            mockUserService.Setup(s => s.GetByUsername(It.IsAny<string>())).Returns(new User());
+            mockUserService.Setup(s => s.CreateUser(It.IsAny<User>())).Returns(request);
+            
+            usersController.Register(new CreateUserRequest());
+
+            mockMapper.Verify(m => m.Map<UserResource>(It.Is<User>(r => r == request)));
         }
 
         [Test]
         public void Register_Returns_Created_Result()
         {
+            mockUserService.Setup(s => s.GetByUsername(It.IsAny<string>())).Returns(new User());
             mockUserService.Setup(s => s.CreateUser(It.IsAny<User>())).Returns(new User());
 
             var result = usersController.Register(new CreateUserRequest()) as CreatedAtActionResult;
@@ -134,33 +176,65 @@ namespace SourceName.Api.Test
         }
 
         [Test]
-        public void Register_Returns_UserResource()
+        public void Register_Returns_CreateUserResource_With_UserResource_If_User_Not_Existed()
         {
             var userId = 1;
             var resource = new UserResource { Id = userId };
 
+            mockUserService.Setup(s => s.GetByUsername(It.IsAny<string>())).Returns(new User());
             mockUserService.Setup(s => s.CreateUser(It.IsAny<User>())).Returns(new User());
 
             mockMapper.Setup(m => m.Map<UserResource>(It.IsAny<User>())).Returns(resource);
 
             var result = usersController.Register(new CreateUserRequest()) as CreatedAtActionResult;
-            var actual = result.Value as UserResource;
+            var actual = result.Value as CreateUserResponse;
 
-            Assert.AreEqual(actual, resource);
+            Assert.AreEqual(actual.UserResource, resource);
+            Assert.AreEqual(actual.IsUserCreated, true);
+        }
+
+        [Test]
+        public void Register_Returns_CreateUserResource_Without_UserResource_If_User_Existed()
+        {
+            var request = new CreateUserRequest { Username = "test" };
+            var result = usersController.Register(request) as OkObjectResult;
+            var actual = result.Value as CreateUserResponse;
+
+            Assert.AreEqual(actual.IsUserCreated, false);
+            Assert.IsNull(actual.UserResource);
+            Assert.IsNotEmpty(actual.Message);
+        }
+
+        [Test]
+        public void DeleteUser_Calls_UserService_GetById()
+        {
+            var userId = 1;
+            usersController.DeleteUser(userId);
+            mockUserService.Verify(s => s.GetById(userId), Times.Once);
         }
 
         [Test]
         public void DeleteUser_Calls_UserService_DeleteUser()
         {
-            usersController.DeleteUser(new int());
-            mockUserService.Verify(s => s.DeleteUser(It.IsAny<int>()), Times.Once);
+            var userId = 1;
+            mockUserService.Setup(s => s.GetById(It.IsAny<int>())).Returns(new User());
+            usersController.DeleteUser(userId);
+            mockUserService.Verify(s => s.DeleteUser(userId), Times.Once);
         }
 
         [Test]
-        public void DeleteUser_Returns_NoContent_Result()
+        public void DeleteUser_Returns_NoContent_Result_If_User_Exists()
         {
+            mockUserService.Setup(s => s.GetById(It.IsAny<int>())).Returns(new User());
             var result = usersController.DeleteUser(new int()) as NoContentResult;
             Assert.AreEqual(204, result.StatusCode);
+        }
+
+        [Test]
+        public void DeleteUser_Returns_NotFound_Result_If_User_Not_Exists()
+        {
+            var result = usersController.DeleteUser(new int()) as NotFoundResult;
+            Assert.AreEqual(404, result.StatusCode);
         }
 
         [Test]
@@ -168,6 +242,17 @@ namespace SourceName.Api.Test
         {
             usersController.GetAll();
             mockUserService.Verify(s => s.GetAll(), Times.Once);
+        }
+
+        [Test]
+        public void GetAll_Maps_To_UserResource()
+        {
+            var users = new List<User> { new User() };
+
+            mockUserService.Setup(s => s.GetAll()).Returns(users);
+            usersController.GetAll();
+
+            mockMapper.Verify(m => m.Map<List<UserResource>>(It.Is<List<User>>(u => u == users)));
         }
 
         [Test]
@@ -213,8 +298,9 @@ namespace SourceName.Api.Test
         [Test]
         public void GetById_Calls_UserService_GetById()
         {
-            usersController.GetById(new int());
-            mockUserService.Verify(s => s.GetById(It.IsAny<int>()), Times.Once);
+            var userId = 1;
+            usersController.GetById(userId);
+            mockUserService.Verify(s => s.GetById(userId), Times.Once);
         }
 
         [Test]
@@ -229,7 +315,7 @@ namespace SourceName.Api.Test
         }
 
         [Test]
-        public void GetById_Returns_UserResource()
+        public void GetById_Returns_UserResource_If_User_Found()
         {
             var userId = 1;
             var resource = new UserResource { Id = userId };
@@ -245,11 +331,21 @@ namespace SourceName.Api.Test
         }
 
         [Test]
+        public void GetById_Returns_NotFoundResult_If_User_Not_Found()
+        {
+            var result = usersController.GetById(new int()) as NotFoundResult;
+
+            Assert.NotNull(result);
+            Assert.AreEqual(404, result.StatusCode);
+        }
+
+        [Test]
         public void GetUserCapabilities_Calls_GetUserCapabilities()
         {
-            mockUserContextService.Setup(s => s.UserId).Returns(new int());
+            var userId = 1;
+            mockUserContextService.Setup(s => s.UserId).Returns(userId);
             usersController.GetUserCapabilities();
-            mockUserCapabilitiesService.Verify(s => s.GetUserCapabilities(It.IsAny<int>()), Times.Once);
+            mockUserCapabilitiesService.Verify(s => s.GetUserCapabilities(userId), Times.Once);
         }
 
         [Test]
@@ -279,18 +375,53 @@ namespace SourceName.Api.Test
             Assert.AreEqual(actual, resource);
         }
 
+        [Test]
+        public void UpdateUser_Calls_UserService_GetById()
+        {
+            var userId = 1;
+            usersController.UpdateUser(userId, new UpdateUserRequest());
+            mockUserService.Verify(s => s.GetById(userId), Times.Once);
+        }
+
+        [Test]
+        public void UpdateUser_Maps_UpdateUserRequest_To_User()
+        {
+            var request = new UpdateUserRequest();
+
+            mockUserService.Setup(s => s.GetById(It.IsAny<int>())).Returns(new User());
+            mockMapper.Setup(m => m.Map<User>(It.IsAny<UpdateUserRequest>())).Returns(new User());
+            usersController.UpdateUser(new int(), request);
+
+            mockMapper.Verify(m => m.Map<User>(It.Is<UpdateUserRequest>(ur => ur == request)));
+        }
 
         [Test]
         public void UpdateUser_Calls_UserService_UpdateUser()
         {
-            mockMapper.Setup(m => m.Map<User>(It.IsAny<UpdateUserRequest>())).Returns(new User());
+            var user = new User();
+            mockUserService.Setup(s => s.GetById(It.IsAny<int>())).Returns(new User());
+            mockMapper.Setup(m => m.Map<User>(It.IsAny<UpdateUserRequest>())).Returns(user);
             usersController.UpdateUser(new int(), new UpdateUserRequest());
-            mockUserService.Verify(s => s.UpdateUser(It.IsAny<User>()), Times.Once);
+            mockUserService.Verify(s => s.UpdateUser(It.Is<User>(u => u == user)), Times.Once);
+        }
+
+        [Test]
+        public void UpdateUser_Maps_User_To_UserResource()
+        {
+            var user = new User();
+            mockUserService.Setup(s => s.GetById(It.IsAny<int>())).Returns(new User());
+            mockMapper.Setup(m => m.Map<User>(It.IsAny<UpdateUserRequest>())).Returns(new User());
+            mockUserService.Setup(s => s.UpdateUser(It.IsAny<User>())).Returns(user);
+
+            usersController.UpdateUser(new int(), new UpdateUserRequest());
+
+            mockMapper.Verify(s => s.Map<UserResource>(It.Is<User>(u => u == user)), Times.Once);
         }
 
         [Test]
         public void UpdateUser_Returns_Ok_Object_Result()
         {
+            mockUserService.Setup(s => s.GetById(It.IsAny<int>())).Returns(new User());
             mockMapper.Setup(m => m.Map<User>(It.IsAny<UpdateUserRequest>())).Returns(new User());
 
             mockUserService.Setup(s => s.UpdateUser(It.IsAny<User>())).Returns(new User());
@@ -302,11 +433,12 @@ namespace SourceName.Api.Test
         }
 
         [Test]
-        public void UpdateUser_Returns_UserResource()
+        public void UpdateUser_Returns_UserResource_If_User_Found()
         {
             var userId = 1;
             var resource = new UserResource { Id = userId };
 
+            mockUserService.Setup(s => s.GetById(It.IsAny<int>())).Returns(new User());
             mockMapper.Setup(m => m.Map<User>(It.IsAny<UpdateUserRequest>())).Returns(new User());
             mockUserService.Setup(s => s.UpdateUser(It.IsAny<User>())).Returns(new User());
             mockMapper.Setup(m => m.Map<UserResource>(It.IsAny<User>())).Returns(resource);
@@ -317,17 +449,48 @@ namespace SourceName.Api.Test
             Assert.AreEqual(actual, resource);
         }
 
+        [Test]
+        public void UpdateUser_Returns_NotFoundResult_If_User_Not_Found()
+        {
+            var result = usersController.UpdateUser(new int(), new UpdateUserRequest()) as NotFoundResult;
+            Assert.NotNull(result);
+            Assert.AreEqual(404, result.StatusCode);
+        }
+
+        [Test]
+        public void UpdatePassword_Calls_UserService_GetById()
+        {
+            var userId = 1;
+            usersController.UpdatePassword(userId, new UpdatePasswordRequest());
+            mockUserService.Verify(s => s.GetById(userId), Times.Once);
+        }
 
         [Test]
         public void UpdatePassword_Calls_UserService_UpdateUser()
         {
-            usersController.UpdatePassword(new int(), new UpdatePasswordRequest());
-            mockUserService.Verify(s => s.UpdateUserPassword(It.IsAny<int>(), It.IsAny<string>()), Times.Once);
+            var userId = 1;
+            var userPassword = "Admin1!"; // password used for default Admin account
+            mockUserService.Setup(s => s.GetById(It.IsAny<int>())).Returns(new User());
+            usersController.UpdatePassword(userId, new UpdatePasswordRequest { Password = userPassword });
+            mockUserService.Verify(s => s.UpdateUserPassword(userId, userPassword), Times.Once);
         }
 
         [Test]
-        public void UpdatePassword_Returns_Ok_Object_Result()
+        public void UpdatePassword_Maps_User_To_UserResource()
         {
+            var resource = new User();
+            mockUserService.Setup(s => s.GetById(It.IsAny<int>())).Returns(new User());
+            mockUserService.Setup(s => s.UpdateUserPassword(It.IsAny<int>(), It.IsAny<string>())).Returns(resource);
+
+            usersController.UpdatePassword(new int(), new UpdatePasswordRequest());
+
+            mockMapper.Verify(m => m.Map<UserResource>(It.Is<User>(r => r == resource)));
+        }
+
+        [Test]
+        public void UpdatePassword_Returns_OkObjectResult_If_User_Found()
+        {
+            mockUserService.Setup(s => s.GetById(It.IsAny<int>())).Returns(new User());
             mockUserService.Setup(s => s.UpdateUserPassword(It.IsAny<int>(), It.IsAny<string>())).Returns(new User());
 
             var result = usersController.UpdatePassword(new int(), new UpdatePasswordRequest()) as OkObjectResult;
@@ -337,11 +500,21 @@ namespace SourceName.Api.Test
         }
 
         [Test]
+        public void UpdatePassword_Returns_NotFoundResult_If_User_Not_Found()
+        {
+            var result = usersController.UpdatePassword(new int(), new UpdatePasswordRequest()) as NotFoundResult;
+
+            Assert.NotNull(result);
+            Assert.AreEqual(404, result.StatusCode);
+        }
+
+        [Test]
         public void UpdatePassword_Returns_UserResource()
         {
             var userId = 1;
             var resource = new UserResource { Id = userId };
 
+            mockUserService.Setup(s => s.GetById(It.IsAny<int>())).Returns(new User());
             mockUserService.Setup(s => s.UpdateUserPassword(It.IsAny<int>(), It.IsAny<string>())).Returns(new User());
             mockMapper.Setup(m => m.Map<UserResource>(It.IsAny<User>())).Returns(resource);
 

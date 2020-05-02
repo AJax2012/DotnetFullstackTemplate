@@ -81,7 +81,7 @@ namespace SourceName.Service.Implementation.Test
         {
             var userId = 1;
             userService.DeleteUser(userId);
-            mockUserRepository.Verify(r => r.Delete(It.Is<int>(id => id == userId)), Times.Once);
+            mockUserRepository.Verify(r => r.Delete(userId), Times.Once);
         }
 
         [Test]
