@@ -11,6 +11,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
+using SourceName.Service.Model.Roles;
 
 namespace SourceName.Service.Implementation.Test
 {
@@ -195,6 +196,142 @@ namespace SourceName.Service.Implementation.Test
             var result = userService.GetByUsername("test");
 
             Assert.NotNull(result);
+            Assert.AreEqual(result, user);
+        }
+
+        [Test]
+        public void GetForAuthentication_Calls_UserRepository_GetByUsernameWithRoles()
+        {
+            var username = "test";
+            userService.GetForAuthentication(username);
+            mockUserRepository.Verify(r => r.GetByUsernameWithRoles(username), Times.Once);
+        }
+
+        [Test]
+        public void GetForAuthentication_Maps_UserEntity_To_User()
+        {
+            var userEntity = new UserEntity();
+            mockUserRepository.Setup(r => r.GetByUsernameWithRoles(It.IsAny<string>())).Returns(userEntity);
+
+            userService.GetForAuthentication("test");
+            mockMapper.Verify(m => m.Map<User>(userEntity), Times.Once);
+        }
+
+        [Test]
+        public void GetForAuthentication_Returns_User()
+        {
+            var user = new User();
+            mockUserRepository.Setup(r => r.GetByUsernameWithRoles(It.IsAny<string>())).Returns(new UserEntity());
+            mockMapper.Setup(m => m.Map<User>(It.IsAny<UserEntity>())).Returns(user);
+
+            var result = userService.GetForAuthentication("test");
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result, user);
+        }
+
+        [Test]
+        public void UpdateUser_Maps_User_To_UserEntity()
+        {
+            var user = new User();
+
+            mockMapper.Setup(r => r.Map<UserEntity>(It.IsAny<User>())).Returns(new UserEntity());
+
+            userService.UpdateUser(user);
+            mockMapper.Verify(m => m.Map<UserEntity>(user), Times.Once);
+        }
+
+        [Test]
+        public void UpdateUser_Calls_UserRepository_Update()
+        {
+            var userEntity = new UserEntity();
+
+            mockMapper.Setup(m => m.Map<UserEntity>(It.IsAny<User>())).Returns(userEntity);
+
+            userService.UpdateUser(new User());
+            mockUserRepository.Verify(r => r.Update(userEntity), Times.Once);
+        }
+
+        [Test]
+        public void UpdateUser_Maps_UserEntity_To_User()
+        {
+            var userEntity = new UserEntity();
+
+            mockMapper.Setup(m => m.Map<UserEntity>(It.IsAny<User>())).Returns(new UserEntity());
+            mockUserRepository.Setup(r => r.Update(It.IsAny<UserEntity>())).Returns(userEntity);
+
+            userService.UpdateUser(new User());
+            mockMapper.Verify(m => m.Map<User>(userEntity), Times.Once);
+        }
+
+        [Test]
+        public void UpdateUser_Returns_User()
+        {
+            var user = new User();
+
+            mockMapper.Setup(m => m.Map<UserEntity>(It.IsAny<User>())).Returns(new UserEntity());
+            mockUserRepository.Setup(r => r.Update(It.IsAny<UserEntity>())).Returns(new UserEntity());
+            mockMapper.Setup(m => m.Map<User>(It.IsAny<UserEntity>())).Returns(user);
+
+            var result = userService.UpdateUser(new User());
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result, user);
+        }
+
+        [Test]
+        public void UpdateUserPassword_Calls_UserPasswordService_CreateHash()
+        {
+            var id = 1;
+            var password = "Admin1!"; // password for default admin account
+            byte[] passwordHash;
+            byte[] passwordSalt;
+
+            userService.UpdateUserPassword(id, password);
+            mockUserPasswordService.Verify(s => s.CreateHash(password, out passwordHash, out passwordSalt), Times.Once);
+        }
+
+        [Test]
+        public void UpdateUserPassword_Calls_UserRepository_UpdatePassword()
+        {
+            var id = 1;
+            byte[] passwordHash = Encoding.UTF8.GetBytes("TestHash");
+            byte[] passwordSalt = Encoding.UTF8.GetBytes("TestSalt");
+
+            mockUserPasswordService.Setup(s => s.CreateHash(It.IsAny<string>(), out passwordHash, out passwordSalt));
+            userService.UpdateUserPassword(id, "Test");
+            mockUserRepository.Verify(s => s.UpdatePassword(id, passwordHash, passwordSalt), Times.Once);
+        }
+
+        [Test]
+        public void UpdateUserPassword_Maps_UserEntity_To_User()
+        {
+            var userEntity = new UserEntity();
+            byte[] passwordHash;
+            byte[] passwordSalt;
+
+            mockUserPasswordService.Setup(s => s.CreateHash(It.IsAny<string>(), out passwordHash, out passwordSalt));
+            mockUserRepository.Setup(r => r.UpdatePassword(It.IsAny<int>(), It.IsAny<byte[]>(), It.IsAny<byte[]>())).Returns(userEntity);
+
+            userService.UpdateUserPassword(new int(), "test");
+
+            mockMapper.Verify(m => m.Map<User>(userEntity), Times.Once);
+        }
+
+        [Test]
+        public void UpdateUserPassword_Returns_User()
+        {
+            var user= new User();
+            byte[] passwordHash;
+            byte[] passwordSalt;
+
+            mockUserPasswordService.Setup(s => s.CreateHash(It.IsAny<string>(), out passwordHash, out passwordSalt));
+            mockUserRepository.Setup(r => r.UpdatePassword(It.IsAny<int>(), It.IsAny<byte[]>(), It.IsAny<byte[]>())).Returns(new UserEntity());
+            mockMapper.Setup(m => m.Map<User>(It.IsAny<UserEntity>())).Returns(user);
+
+            var result = userService.UpdateUserPassword(new int(), "test");
+
+            Assert.IsNotNull(result);
             Assert.AreEqual(result, user);
         }
     }
