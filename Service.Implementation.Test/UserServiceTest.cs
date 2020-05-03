@@ -88,7 +88,7 @@ namespace SourceName.Service.Implementation.Test
         public void GetAll_Calls_UserRepository_Get()
         {
             userService.GetAll();
-            mockUserRepository.Verify(r => r.Get(It.IsAny<Expression<Func<UserEntity,bool>>>()), Times.Once);
+            mockUserRepository.Verify(r => r.Get(null), Times.Once);
         }
 
         [Test]
@@ -130,7 +130,16 @@ namespace SourceName.Service.Implementation.Test
         {
             var userId = 1;
             userService.GetById(userId);
-            mockUserRepository.Verify(r => r.GetById(It.Is<int>(id => id == userId)), Times.Once);
+            mockUserRepository.Verify(r => r.GetById(userId), Times.Once);
+        }
+
+        [Test]
+        public void GetById_Maps_UserEntity_To_User()
+        {
+            var userEntity = new UserEntity();
+            mockUserRepository.Setup(r => r.GetById(It.IsAny<int>())).Returns(userEntity);
+            userService.GetById(new int());
+            mockMapper.Verify(r => r.Map<User>(userEntity), Times.Once);
         }
 
         [Test]
@@ -158,6 +167,35 @@ namespace SourceName.Service.Implementation.Test
             var result = userService.GetById(userId);
 
             Assert.AreEqual(result, resource);
+        }
+
+        [Test]
+        public void GetByUsername_Calls_UserRepository_Get()
+        {
+            var username = "test";
+            userService.GetByUsername(username);
+            mockUserRepository.Verify(r => r.Get(x => x.Username == username));
+        }
+
+        [Test]
+        public void GetByUsername_Maps_UserEntity_To_User()
+        {
+            var userEntity = new UserEntity();
+            mockUserRepository.Setup(r => r.Get(It.IsAny<Expression<Func<UserEntity, bool>>>())).Returns(new List<UserEntity> { userEntity });
+            userService.GetByUsername("test");
+            mockMapper.Verify(m => m.Map<User>(userEntity));
+        }
+
+        [Test]
+        public void GetByUsername_Returns_User()
+        {
+            var user = new User();
+            mockUserRepository.Setup(r => r.Get(It.IsAny<Expression<Func<UserEntity, bool>>>())).Returns(new List<UserEntity>());
+            mockMapper.Setup(m => m.Map<User>(It.IsAny<UserEntity>())).Returns(user);
+            var result = userService.GetByUsername("test");
+
+            Assert.NotNull(result);
+            Assert.AreEqual(result, user);
         }
     }
 }
