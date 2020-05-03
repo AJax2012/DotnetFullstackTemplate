@@ -11,7 +11,6 @@ using SourceName.Service.Users;
 using System.Linq;
 using System.Collections.Generic;
 using System;
-using System.Threading.Tasks;
 
 namespace SourceName.Api.Test
 {
@@ -53,7 +52,18 @@ namespace SourceName.Api.Test
         }
 
         [Test]
-        public void Authenticate_Calls_UserService_GetUserById()
+        public void Authenticate_Logs_When_Token_Null()
+        {
+            usersController.Authenticate(new AuthenticateUserRequest());
+            mockLogger.Verify(l => l.Log<It.IsAnyType>(
+                LogLevel.Information, It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                null,
+                (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()), Times.Once);
+        }
+
+        [Test]
+        public void Authenticate_Calls_UserService_GetUserByUsername()
         {
             var request = new AuthenticateUserRequest { Username = "test", Password = "Admin1!" }; // password is the same as the default admin password
 
@@ -153,6 +163,21 @@ namespace SourceName.Api.Test
         }
 
         [Test]
+        public void Register_Logs()
+        {
+            mockUserService.Setup(s => s.GetByUsername(It.IsAny<string>())).Returns(new User());
+            mockMapper.Setup(m => m.Map<User>(It.IsAny<CreateUserRequest>())).Returns(new User());
+            mockUserService.Setup(s => s.CreateUser(It.IsAny<User>())).Returns(new User());
+
+            usersController.Register(new CreateUserRequest());
+            mockLogger.Verify(l => l.Log<It.IsAnyType>(
+                LogLevel.Information, It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                null,
+                (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()), Times.Once);
+        }
+
+        [Test]
         public void Register_Calls_Automapper_Map_To_UserResource()
         {
             var request = new User();
@@ -213,6 +238,19 @@ namespace SourceName.Api.Test
             var userId = 1;
             usersController.DeleteUser(userId);
             mockUserService.Verify(s => s.GetById(userId), Times.Once);
+        }
+
+        [Test]
+        public void DeleteUser_Logs_When_User_Found()
+        {
+            mockUserService.Setup(s => s.GetById(It.IsAny<int>())).Returns(new User());
+
+            usersController.DeleteUser(new int());
+            mockLogger.Verify(l => l.Log<It.IsAnyType>(
+                LogLevel.Information, It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                null,
+                (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()), Times.Once);
         }
 
         [Test]
@@ -386,6 +424,20 @@ namespace SourceName.Api.Test
         }
 
         [Test]
+        public void UpdateUser_Logs_When_User_Found()
+        {
+            mockUserService.Setup(s => s.GetById(It.IsAny<int>())).Returns(new User());
+            mockMapper.Setup(m => m.Map<User>(It.IsAny<UpdateUserRequest>())).Returns(new User());
+
+            usersController.UpdateUser(new int(), new UpdateUserRequest());
+            mockLogger.Verify(l => l.Log<It.IsAnyType>(
+                LogLevel.Information, It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                null,
+                (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()), Times.Once);
+        }
+
+        [Test]
         public void UpdateUser_Maps_UpdateUserRequest_To_User()
         {
             var request = new UpdateUserRequest();
@@ -465,6 +517,20 @@ namespace SourceName.Api.Test
             var userId = 1;
             usersController.UpdatePassword(userId, new UpdatePasswordRequest());
             mockUserService.Verify(s => s.GetById(userId), Times.Once);
+        }
+
+        [Test]
+        public void UpdatePassword_Logs_When_User_Found()
+        {
+            mockUserService.Setup(s => s.GetById(It.IsAny<int>())).Returns(new User());
+            mockMapper.Setup(m => m.Map<User>(It.IsAny<UpdateUserRequest>())).Returns(new User());
+
+            usersController.UpdatePassword(new int(), new UpdatePasswordRequest());
+            mockLogger.Verify(l => l.Log<It.IsAnyType>(
+                LogLevel.Information, It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                null,
+                (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()), Times.Once);
         }
 
         [Test]
