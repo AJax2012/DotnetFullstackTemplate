@@ -1,0 +1,47 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "Adam Gardner",
+    "classifications": [
+        "Common",
+        "Code"
+    ],
+    "identity": "ajax2012.fullstack.tsql.web",
+    "name": ".NET Core 3.1 full-stack web API with SQL Server",
+    "shortName": "fullstack-tsql",
+    "sourceName": "SourceName",
+    "tags": {
+        "language": "C#",
+        "type": "item"
+    },
+    "postActions": [{
+        "condition": "(!skipRestore)",
+        "description": "Restore NuGet packages required by this project.",
+        "manualInstructions": [{
+            "text": "Run 'dotnet restore'"
+        }],
+        "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
+        "continueOnError": true
+    }],
+    "guids": [
+        "5D9158C1-C204-4A9E-A84D-43802AD27A55",
+        "805E4096-EB7E-41AA-8C6F-C0A580D8B43D",
+        "8C9CF0CA-E1DC-40B6-9B0E-827879C77B34",
+        "79F0A726-F7BA-4283-9AD4-94E4DAF85E7A",
+        "B3467321-DABD-4943-B939-304F80ED1485",
+        "E8018608-4292-4FDB-9F3B-98F707A4292D",
+        "39B71A50-0B0B-4584-8072-E5A1CBE710B3",
+        "50058F4F-9E3F-4A9D-8EFE-4ADF0E0E4935",
+        "22550086-6464-4B9B-AF62-E3D8676C97CF",
+        "FD49D04E-BB26-4C18-BC1B-D4CAE6FFE11E",
+        "DBB5F5E2-6D9E-44AD-9FD6-F3AA34FD2772",
+        "0C2A8A2F-3BF0-42E4-A6CC-FF1A78DD1064"
+    ],
+    "symbols": {
+        "DbName": {
+            "type": "parameter",
+            "replaces": "DatabaseName",
+            "FileRename": "DatabaseName",
+            "isRequired": true
+        }
+    }
+}

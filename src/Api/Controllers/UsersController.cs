@@ -17,13 +17,15 @@ namespace SourceName.Api.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IMapper _mapper;
+        private readonly IUserPasswordValidationService _userPasswordValidationService;
         private readonly IUserAuthenticationService _userAuthenticationService;
         private readonly IUserCapabilitiesService _userCapabilitiesService;
         private readonly IUserContextService _userContextService;
         private readonly IUserService _userService;
         private readonly ILogger<UsersController> _logger;
 
-        public UsersController(IMapper mapper,
+        public UsersController(IMapper mapper, 
+                               IUserPasswordValidationService userPasswordValidationService,
                                IUserAuthenticationService userAuthenticationService,
                                IUserCapabilitiesService userCapabilitiesService,
                                IUserContextService userContextService,
@@ -31,6 +33,7 @@ namespace SourceName.Api.Controllers
                                ILogger<UsersController> logger)
         {
             _mapper = mapper;
+            _userPasswordValidationService = userPasswordValidationService;
             _userAuthenticationService = userAuthenticationService;
             _userCapabilitiesService = userCapabilitiesService;
             _userContextService = userContextService;
@@ -64,6 +67,13 @@ namespace SourceName.Api.Controllers
         [HttpPost("register")]
         public IActionResult Register([FromBody] CreateUserRequest request)
         {
+            var validationObject = _userPasswordValidationService.Validate(request.Password);
+
+            if (!validationObject.IsValid)
+            {
+                return BadRequest(validationObject);
+            }
+
             if (_userService.GetByUsername(request.Username) == null)
             {
                 var errorResponse = new CreateUserResponse
@@ -141,6 +151,13 @@ namespace SourceName.Api.Controllers
         [HttpPatch("{id}/password")]
         public IActionResult UpdatePassword([FromRoute] int id, [FromBody] UpdatePasswordRequest request)
         {
+            var validationObject = _userPasswordValidationService.Validate(request.Password);
+
+            if (!validationObject.IsValid)
+            {
+                return BadRequest(validationObject);
+            }
+
             if (_userService.GetById(id) == null)
             {
                 return NotFound();
