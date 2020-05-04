@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SourceName.Service.Implementation.Test
+namespace SourceName.Service.Implementation.Test.Users
 {
     [TestFixture]
     public class UserPasswordValidationServiceTest

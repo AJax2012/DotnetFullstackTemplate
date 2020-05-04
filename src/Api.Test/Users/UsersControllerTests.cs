@@ -12,7 +12,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 
-namespace SourceName.Api.Test
+namespace SourceName.Api.Test.Users
 {
     [TestFixture]
     public class UsersControllerTests

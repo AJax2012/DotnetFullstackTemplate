@@ -6,7 +6,7 @@ using SourceName.Api.Model.Configuration;
 using SourceName.Service.Model.Users;
 using SourceName.Service.Users;
 
-namespace SourceName.Api.Test
+namespace SourceName.Api.Test.Users
 {
     [TestFixture]
     public class UserAuthenticationServiceTest

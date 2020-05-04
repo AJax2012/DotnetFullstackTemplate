@@ -13,7 +13,7 @@ using System.Linq.Expressions;
 using System.Text;
 using SourceName.Service.Model.Roles;
 
-namespace SourceName.Service.Implementation.Test
+namespace SourceName.Service.Implementation.Test.Users
 {
     [TestFixture]
     public class UserServiceTest
