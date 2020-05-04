@@ -11,7 +11,7 @@ using SourceName.Service.Users;
 
 namespace SourceName.Api.Controllers
 {
-    [Authorize(Roles = "Administrator,User")]
+    [Authorize(Roles = "Administrator")]
     [ApiController]
     [Route("api/users")]
     public class UsersController : ControllerBase
@@ -126,7 +126,6 @@ namespace SourceName.Api.Controllers
             return Ok(_mapper.Map<UserResource>(user));
         }
 
-        [Authorize]
         [HttpGet("capabilities")]
         public IActionResult GetUserCapabilities()
         {
