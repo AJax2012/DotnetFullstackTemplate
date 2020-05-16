@@ -3,7 +3,6 @@ using SourceName.Service.Implementation.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace SourceName.Service.Implementation.Test.Users
 {
@@ -33,10 +32,7 @@ namespace SourceName.Service.Implementation.Test.Users
             var password = "";
             var expectedErrors = new List<string> 
             { 
-                "Value cannot be empty or whitespace", 
-                "Password must contain at least one letter and one number", 
-                "Password must contain at least one upper case and lower case letter", 
-                "Password may not have repeating characters" 
+                "Value cannot be empty or whitespace"
             };
 
             var result = userPasswordValidationService.Validate(password);
@@ -95,32 +91,13 @@ namespace SourceName.Service.Implementation.Test.Users
         }
 
         [Test]
-        [TestCase("tt1T")]
-        [TestCase("abab1A")]
-        [TestCase("abcabc1A")]
-        public void Validate_Returns_Error_Messages_When_Password_Has_Repeating_Characters(string password)
-        {
-            var expectedErrors = new List<string>
-            {
-                "Password may not have repeating characters"
-            };
-
-            var result = userPasswordValidationService.Validate(password);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.IsTrue(result.Errors.Any());
-            Assert.IsTrue(result.Errors.All(message => expectedErrors.Contains(message)));
-        }
-
-        [Test]
         public void Validate_Returns_Error_Messages_When_Password_Has_Multiple_Validation_Errors()
         {
-            var password = "testtt";
+            var password = "test";
             var expectedErrors = new List<string>
             {
                 "Password must contain at least one upper case and lower case letter",
                 "Password must contain at least one letter and one number",
-                "Password may not have repeating characters"
             };
 
             var result = userPasswordValidationService.Validate(password);
