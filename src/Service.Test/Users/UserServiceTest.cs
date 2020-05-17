@@ -74,7 +74,7 @@ namespace SourceName.Service.Implementation.Test.Users
 
             var result = userService.CreateUser(new User());
 
-            Assert.AreEqual(result, resource);
+            Assert.AreEqual(resource, result);
         }
 
         [Test]
@@ -123,7 +123,7 @@ namespace SourceName.Service.Implementation.Test.Users
 
             var result = userService.GetAll();
 
-            Assert.AreEqual(result, resource);
+            Assert.AreEqual(resource, result);
         }
 
         [Test]
@@ -167,7 +167,7 @@ namespace SourceName.Service.Implementation.Test.Users
 
             var result = userService.GetById(userId);
 
-            Assert.AreEqual(result, resource);
+            Assert.AreEqual(resource, result);
         }
 
         [Test]
@@ -196,7 +196,7 @@ namespace SourceName.Service.Implementation.Test.Users
             var result = userService.GetByUsername("test");
 
             Assert.NotNull(result);
-            Assert.AreEqual(result, user);
+            Assert.AreEqual(user, result);
         }
 
         [Test]
@@ -227,7 +227,7 @@ namespace SourceName.Service.Implementation.Test.Users
             var result = userService.GetForAuthentication("test");
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(result, user);
+            Assert.AreEqual(user, result);
         }
 
         [Test]
@@ -276,7 +276,7 @@ namespace SourceName.Service.Implementation.Test.Users
             var result = userService.UpdateUser(new User());
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(result, user);
+            Assert.AreEqual(user, result);
         }
 
         [Test]

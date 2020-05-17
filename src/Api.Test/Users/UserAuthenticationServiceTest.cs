@@ -81,7 +81,7 @@ namespace SourceName.Api.Test.Users
             var result = userAuthenticationService.Authenticate(username, password);
             var wasUserAuthenticated = result != null;
 
-            Assert.AreEqual(wasUserAuthenticated, isActive);
+            Assert.AreEqual(isActive, wasUserAuthenticated);
         }
 
         [Test]
@@ -98,7 +98,7 @@ namespace SourceName.Api.Test.Users
             var result = userAuthenticationService.Authenticate(username, password);
             var wasUserAuthenticated = result != null;
 
-            Assert.AreEqual(wasUserAuthenticated, isValid);
+            Assert.AreEqual(isValid, wasUserAuthenticated);
         }
     }
 }

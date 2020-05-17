@@ -51,7 +51,7 @@ namespace SourceName.Service.Implementation.Test.Users
             var actualResult = userCapabilitiesService.GetUserCapabilities(new int());
 
             Assert.IsNotNull(actualResult);
-            Assert.AreEqual(actualResult.CanManageUsers, expectedResult);
+            Assert.AreEqual(expectedResult, actualResult.CanManageUsers);
         }
     }
 }

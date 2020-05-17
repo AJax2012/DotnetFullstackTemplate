@@ -116,9 +116,9 @@ namespace SourceName.Api.Test.Users
             var result = usersController.Authenticate(new AuthenticateUserRequest()) as OkObjectResult;
             var actual = result.Value as AuthenticateUserResponse;
 
-            Assert.AreEqual(actual.FirstName, userResponse.FirstName);
-            Assert.AreEqual(actual.LastName, userResponse.LastName);
-            Assert.AreEqual(actual.Token, userResponse.Token);
+            Assert.AreEqual(userResponse.FirstName, actual.FirstName);
+            Assert.AreEqual(userResponse.LastName, actual.LastName);
+            Assert.AreEqual(userResponse.Token, actual.Token);
         }
 
         [Test]
@@ -236,7 +236,7 @@ namespace SourceName.Api.Test.Users
             var actual = result.Value as PasswordValidationResult;
 
             Assert.AreEqual(400, result.StatusCode);
-            Assert.AreEqual(actual, validationResult);
+            Assert.AreEqual(validationResult, actual);
         }
 
         [Test]
@@ -254,8 +254,8 @@ namespace SourceName.Api.Test.Users
             var result = usersController.Register(new CreateUserRequest()) as CreatedAtActionResult;
             var actual = result.Value as CreateUserResponse;
 
-            Assert.AreEqual(actual.UserResource, resource);
-            Assert.AreEqual(actual.IsUserCreated, true);
+            Assert.AreEqual(resource, actual.UserResource);
+            Assert.IsTrue(actual.IsUserCreated);
         }
 
         [Test]
@@ -267,7 +267,7 @@ namespace SourceName.Api.Test.Users
             var result = usersController.Register(request) as OkObjectResult;
             var actual = result.Value as CreateUserResponse;
 
-            Assert.AreEqual(actual.IsUserCreated, false);
+            Assert.IsFalse(actual.IsUserCreated);
             Assert.IsNull(actual.UserResource);
             Assert.IsNotEmpty(actual.Message);
         }
@@ -372,7 +372,7 @@ namespace SourceName.Api.Test.Users
             var result = usersController.GetAll() as OkObjectResult;
             var actual = result.Value as List<UserResource>;
 
-            Assert.AreEqual(actual, resource);
+            Assert.AreEqual(resource, actual);
         }
 
         [Test]
@@ -407,7 +407,7 @@ namespace SourceName.Api.Test.Users
             var result = usersController.GetById(new int()) as OkObjectResult;
             var actual = result.Value as UserResource;
 
-            Assert.AreEqual(actual, resource);
+            Assert.AreEqual(resource, actual);
         }
 
         [Test]
@@ -452,7 +452,7 @@ namespace SourceName.Api.Test.Users
             var result = usersController.GetUserCapabilities() as OkObjectResult;
             var actual = result.Value as UserCapabilitiesResource;
 
-            Assert.AreEqual(actual, resource);
+            Assert.AreEqual(resource, actual);
         }
 
         [Test]
@@ -540,7 +540,7 @@ namespace SourceName.Api.Test.Users
             var result = usersController.UpdateUser(new int(), new UpdateUserRequest()) as OkObjectResult;
             var actual = result.Value as UserResource;
 
-            Assert.AreEqual(actual, resource);
+            Assert.AreEqual(resource, actual);
         }
 
         [Test]
@@ -627,7 +627,7 @@ namespace SourceName.Api.Test.Users
             var actual = result.Value as PasswordValidationResult;
 
             Assert.AreEqual(400, result.StatusCode);
-            Assert.AreEqual(actual, validationResult);
+            Assert.AreEqual(validationResult, actual);
         }
 
         [Test]

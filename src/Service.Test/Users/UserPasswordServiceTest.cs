@@ -31,8 +31,8 @@ namespace SourceName.Service.Implementation.Test.Users
             var actualHashHasValue = passwordHash?.Length > 0;
             var actualSaltHasValue = passwordSalt?.Length > 0;
 
-            Assert.AreEqual(actualHashHasValue, true);
-            Assert.AreEqual(actualSaltHasValue, true);
+            Assert.IsTrue(actualHashHasValue);
+            Assert.IsTrue(actualSaltHasValue);
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace SourceName.Service.Implementation.Test.Users
 
             var exception = Assert.Throws<ArgumentException>(() => userPasswordService.CreateHash(password, out passwordHash, out passwordSalt));
 
-            Assert.AreEqual(exception.Message, expectedExceptionMessage);
+            Assert.AreEqual(expectedExceptionMessage, exception.Message);
         }
 
         [Test]
@@ -69,7 +69,7 @@ namespace SourceName.Service.Implementation.Test.Users
             var expectedExceptionMessage = "Expected 64-byte password hash (Parameter 'passwordHash')";
 
             var exception = Assert.Throws<ArgumentException>(() => userPasswordService.ValidateHash(password, passwordHash, passwordSalt)); ;
-            Assert.AreEqual(exception.Message, expectedExceptionMessage);
+            Assert.AreEqual(expectedExceptionMessage, exception.Message);
         }
 
         [Test]
@@ -81,7 +81,7 @@ namespace SourceName.Service.Implementation.Test.Users
             var expectedExceptionMessage = "Expected 128-byte password salt (Parameter 'passwordSalt')";
 
             var exception = Assert.Throws<ArgumentException>(() => userPasswordService.ValidateHash(password, passwordHash, passwordSalt));
-            Assert.AreEqual(exception.Message, expectedExceptionMessage);
+            Assert.AreEqual(expectedExceptionMessage, exception.Message);
         }
     }
 }
