@@ -42,7 +42,7 @@ namespace SourceName.Data.Implementation.User
             return _context.Set<UserEntity>()
                 .Include(u => u.Roles)
                 .Include("Roles.Role")
-                .SingleOrDefault();
+                .SingleOrDefault(u => u.Id == id);
         }
 
         public UserEntity GetByUsernameWithRoles(string username)
