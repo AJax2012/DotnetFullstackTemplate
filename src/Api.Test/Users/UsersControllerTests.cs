@@ -20,6 +20,7 @@ namespace SourceName.Api.Test.Users
         private UsersController usersController;
         private Mock<IMapper> mockMapper;
         private Mock<IUserPasswordValidationService> mockUserPasswordValidationService;
+        private Mock<IUserValidationService> mockUserValidationService;
         private Mock<IUserAuthenticationService> mockUserAuthenticationService;
         private Mock<IUserCapabilitiesService> mockUserCapabilitiesService;
         private Mock<IUserContextService> mockUserContextService;
@@ -31,12 +32,13 @@ namespace SourceName.Api.Test.Users
         {
             mockMapper = new Mock<IMapper>();
             mockUserPasswordValidationService = new Mock<IUserPasswordValidationService>();
+            mockUserValidationService = new Mock<IUserValidationService>();
             mockUserAuthenticationService = new Mock<IUserAuthenticationService>();
             mockUserCapabilitiesService = new Mock<IUserCapabilitiesService>();
             mockUserContextService = new Mock<IUserContextService>();
             mockUserService = new Mock<IUserService>();
             mockLogger = new Mock<ILogger<UsersController>>();
-            usersController = new UsersController(mockMapper.Object, mockUserPasswordValidationService.Object, mockUserAuthenticationService.Object,
+            usersController = new UsersController(mockMapper.Object, mockUserPasswordValidationService.Object, mockUserValidationService.Object, mockUserAuthenticationService.Object,
                                                   mockUserCapabilitiesService.Object, mockUserContextService.Object,
                                                   mockUserService.Object, mockLogger.Object);
         }
@@ -129,27 +131,16 @@ namespace SourceName.Api.Test.Users
         }
 
         [Test]
-        public void Register_Calls_UserPasswordValidationService_Validate()
+        public void Register_Calls_UserValidationService_ValidateUser()
         {
-            var password = "test";
-            var error = "test error";
-            var validationResult = new PasswordValidationResult();
-            validationResult.Errors.Add(error);
+            var user = new User();
 
-            mockUserPasswordValidationService.Setup(s => s.Validate(It.IsAny<string>())).Returns(validationResult);
-            usersController.Register(new CreateUserRequest { Password = password });
-            mockUserPasswordValidationService.Verify(s => s.Validate(password), Times.Once);
-        }
+            mockMapper.Setup(m => m.Map<User>(It.IsAny<CreateUserRequest>())).Returns(user);
+            mockUserValidationService.Setup(s => s.ValidateUser(It.IsAny<User>())).Returns(new UserValidationResult());
+            mockUserService.Setup(s => s.CreateUser(It.IsAny<User>())).Returns(new User { Id = new int() });
 
-        [Test]
-        public void Register_Calls_UserService_GetByUsername()
-        {
-            var username = "test";
-
-            mockUserPasswordValidationService.Setup(s => s.Validate(It.IsAny<string>())).Returns(new PasswordValidationResult());
-            usersController.Register(new CreateUserRequest { Username = username });
-
-            mockUserService.Verify(s => s.GetByUsername(username), Times.Once);
+            usersController.Register(new CreateUserRequest());
+            mockUserValidationService.Verify(s => s.ValidateUser(user), Times.Once);
         }
 
         [Test]
@@ -157,7 +148,7 @@ namespace SourceName.Api.Test.Users
         {
             var request = new CreateUserRequest();
 
-            mockUserPasswordValidationService.Setup(s => s.Validate(It.IsAny<string>())).Returns(new PasswordValidationResult());
+            mockUserValidationService.Setup(s => s.ValidateUser(It.IsAny<User>())).Returns(new UserValidationResult());
             mockUserService.Setup(s => s.GetByUsername(It.IsAny<string>())).Returns(new User());
             mockUserService.Setup(s => s.CreateUser(It.IsAny<User>())).Returns(new User());
             usersController.Register(request);
@@ -170,7 +161,7 @@ namespace SourceName.Api.Test.Users
         {
             var user = new User();
 
-            mockUserPasswordValidationService.Setup(s => s.Validate(It.IsAny<string>())).Returns(new PasswordValidationResult());
+            mockUserValidationService.Setup(s => s.ValidateUser(It.IsAny<User>())).Returns(new UserValidationResult());
             mockUserService.Setup(s => s.GetByUsername(It.IsAny<string>())).Returns(new User());
             mockMapper.Setup(m => m.Map<User>(It.IsAny<CreateUserRequest>())).Returns(user);
             mockUserService.Setup(s => s.CreateUser(It.IsAny<User>())).Returns(new User());
@@ -183,7 +174,7 @@ namespace SourceName.Api.Test.Users
         [Test]
         public void Register_Logs()
         {
-            mockUserPasswordValidationService.Setup(s => s.Validate(It.IsAny<string>())).Returns(new PasswordValidationResult());
+            mockUserValidationService.Setup(s => s.ValidateUser(It.IsAny<User>())).Returns(new UserValidationResult());
             mockUserService.Setup(s => s.GetByUsername(It.IsAny<string>())).Returns(new User());
             mockMapper.Setup(m => m.Map<User>(It.IsAny<CreateUserRequest>())).Returns(new User());
             mockUserService.Setup(s => s.CreateUser(It.IsAny<User>())).Returns(new User());
@@ -201,7 +192,7 @@ namespace SourceName.Api.Test.Users
         {
             var request = new User();
 
-            mockUserPasswordValidationService.Setup(s => s.Validate(It.IsAny<string>())).Returns(new PasswordValidationResult());
+            mockUserValidationService.Setup(s => s.ValidateUser(It.IsAny<User>())).Returns(new UserValidationResult());
             mockUserService.Setup(s => s.GetByUsername(It.IsAny<string>())).Returns(new User());
             mockUserService.Setup(s => s.CreateUser(It.IsAny<User>())).Returns(request);
             
@@ -213,7 +204,7 @@ namespace SourceName.Api.Test.Users
         [Test]
         public void Register_Returns_Created_Result()
         {
-            mockUserPasswordValidationService.Setup(s => s.Validate(It.IsAny<string>())).Returns(new PasswordValidationResult());
+            mockUserValidationService.Setup(s => s.ValidateUser(It.IsAny<User>())).Returns(new UserValidationResult());
             mockUserService.Setup(s => s.GetByUsername(It.IsAny<string>())).Returns(new User());
             mockUserService.Setup(s => s.CreateUser(It.IsAny<User>())).Returns(new User());
 
@@ -227,15 +218,15 @@ namespace SourceName.Api.Test.Users
         public void Register_Returns_BadRequestObjectResult_With_PasswordValidationResult_If_Password_Invalid()
         {
             var error = "test error";
-            var validationResult = new PasswordValidationResult();
+            var validationResult = new UserValidationResult();
             validationResult.Errors.Add(error);
 
-            mockUserPasswordValidationService.Setup(s => s.Validate(It.IsAny<string>())).Returns(validationResult);
+            mockUserValidationService.Setup(s => s.ValidateUser(It.IsAny<User>())).Returns(validationResult);
             var request = new CreateUserRequest();
-            var result = usersController.Register(request) as BadRequestObjectResult;
-            var actual = result.Value as PasswordValidationResult;
+            var result = usersController.Register(request) as OkObjectResult;
+            var actual = result.Value as UserValidationResult;
 
-            Assert.AreEqual(400, result.StatusCode);
+            Assert.AreEqual(200, result.StatusCode);
             Assert.AreEqual(validationResult, actual);
         }
 
@@ -245,7 +236,7 @@ namespace SourceName.Api.Test.Users
             var userId = 1;
             var resource = new UserResource { Id = userId };
 
-            mockUserPasswordValidationService.Setup(s => s.Validate(It.IsAny<string>())).Returns(new PasswordValidationResult());
+            mockUserValidationService.Setup(s => s.ValidateUser(It.IsAny<User>())).Returns(new UserValidationResult());
             mockUserService.Setup(s => s.GetByUsername(It.IsAny<string>())).Returns(new User());
             mockUserService.Setup(s => s.CreateUser(It.IsAny<User>())).Returns(new User());
 
@@ -256,20 +247,6 @@ namespace SourceName.Api.Test.Users
 
             Assert.AreEqual(resource, actual.UserResource);
             Assert.IsTrue(actual.IsUserCreated);
-        }
-
-        [Test]
-        public void Register_Returns_CreateUserResource_Without_UserResource_If_User_Existed()
-        {
-            var request = new CreateUserRequest { Username = "test" };
-
-            mockUserPasswordValidationService.Setup(s => s.Validate(It.IsAny<string>())).Returns(new PasswordValidationResult());
-            var result = usersController.Register(request) as OkObjectResult;
-            var actual = result.Value as CreateUserResponse;
-
-            Assert.IsFalse(actual.IsUserCreated);
-            Assert.IsNull(actual.UserResource);
-            Assert.IsNotEmpty(actual.Message);
         }
 
         [Test]

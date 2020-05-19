@@ -11,7 +11,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
-using SourceName.Service.Model.Roles;
 
 namespace SourceName.Service.Implementation.Test.Users
 {

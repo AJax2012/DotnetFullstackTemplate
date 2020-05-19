@@ -15,6 +15,7 @@ namespace SourceName.DependencyInjection
             services.AddScoped<IUserContextService, UserContextService>();
             services.AddScoped<IUserPasswordService, UserPasswordService>();
             services.AddScoped<IUserPasswordValidationService, UserPasswordValidationService>();
+            services.AddScoped<IUserValidationService, UserValidationService>();
             services.AddScoped<IUserService, UserService>();
         }
     }

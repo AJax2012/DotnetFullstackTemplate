@@ -18,6 +18,7 @@ namespace SourceName.Api.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IUserPasswordValidationService _userPasswordValidationService;
+        private readonly IUserValidationService _userValidationService;
         private readonly IUserAuthenticationService _userAuthenticationService;
         private readonly IUserCapabilitiesService _userCapabilitiesService;
         private readonly IUserContextService _userContextService;
@@ -26,6 +27,7 @@ namespace SourceName.Api.Controllers
 
         public UsersController(IMapper mapper, 
                                IUserPasswordValidationService userPasswordValidationService,
+                               IUserValidationService userValidationService,
                                IUserAuthenticationService userAuthenticationService,
                                IUserCapabilitiesService userCapabilitiesService,
                                IUserContextService userContextService,
@@ -34,6 +36,7 @@ namespace SourceName.Api.Controllers
         {
             _mapper = mapper;
             _userPasswordValidationService = userPasswordValidationService;
+            _userValidationService = userValidationService;
             _userAuthenticationService = userAuthenticationService;
             _userCapabilitiesService = userCapabilitiesService;
             _userContextService = userContextService;
@@ -67,21 +70,12 @@ namespace SourceName.Api.Controllers
         [HttpPost("register")]
         public IActionResult Register([FromBody] CreateUserRequest request)
         {
-            var validationObject = _userPasswordValidationService.Validate(request.Password);
+            var user = _mapper.Map<User>(request);
+            var validationObject = _userValidationService.ValidateUser(user);
 
             if (!validationObject.IsValid)
             {
-                return BadRequest(validationObject);
-            }
-
-            if (_userService.GetByUsername(request.Username) == null)
-            {
-                var errorResponse = new CreateUserResponse
-                {
-                    IsUserCreated = false,
-                    Message = "Username Already Exists"
-                };
-                return Ok(errorResponse);
+                return Ok(validationObject);
             }
 
             var newUser = _userService.CreateUser(_mapper.Map<User>(request));
