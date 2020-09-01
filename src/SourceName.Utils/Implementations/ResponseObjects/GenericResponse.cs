@@ -1,6 +1,4 @@
-﻿using SourceName.Utils.Interfaces;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace SourceName.Utils.Implementations.ResponseObjects
@@ -18,25 +16,6 @@ namespace SourceName.Utils.Implementations.ResponseObjects
         {
             Errors.Add(error);
             Content = content;
-        }
-    }
-
-    public class GenericResponseFactory : IGenericResponseFactory
-    {
-        public GenericResponse Create(ResponseType responseCode, string exceptionMessage = null, object content = null, string requestedObjectIdentifier = null)
-        {
-            var namespaceString = typeof(GenericResponseFactory).Namespace;
-
-            try
-            {
-                return (GenericResponse)Activator.CreateInstance(
-                        Type.GetType($"{namespaceString}.{responseCode}Response"),
-                        new object[] { exceptionMessage, content, requestedObjectIdentifier });
-            }
-            catch
-            {
-                return null;
-            }
         }
     }
 }
