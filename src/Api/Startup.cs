@@ -12,13 +12,11 @@ using SourceName.DependencyInjection;
 using SourceName.Mapping;
 using SourceName.Service.Init;
 using SourceName.Api.Core.Authentication;
-using SourceName.Api.Model.Configuration;
 using SourceName.Api.Core.Filters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Swagger;
+using SourceName.Utils.Configuration;
 
 namespace SourceName.Api
 {
@@ -39,6 +37,7 @@ namespace SourceName.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<SecretsConfiguration>(Configuration.GetSection("Secrets"));
+            services.Configure<AppConfig>(Configuration.GetSection("AppConfig"));
 
             services.AddControllers(options =>
             {
@@ -79,6 +78,7 @@ namespace SourceName.Api
                 };
             });
 
+            services.AddUtils();
             services.AddServiceLayer();
             services.AddDataLayer(Configuration.GetConnectionString("SourceNameDatabase"));
 

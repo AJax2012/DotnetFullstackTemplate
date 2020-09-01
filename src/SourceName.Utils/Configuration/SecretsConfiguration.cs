@@ -1,4 +1,4 @@
-﻿namespace SourceName.Api.Model.Configuration
+﻿namespace SourceName.Utils.Configuration
 {
     public class SecretsConfiguration
     {

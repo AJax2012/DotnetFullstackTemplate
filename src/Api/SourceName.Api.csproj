@@ -26,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DependencyInjection\SourceName.DependencyInjection.csproj" />
     <ProjectReference Include="..\Mapping\SourceName.Mapping.csproj" />
+    <ProjectReference Include="..\SourceName.Utils\SourceName.Utils.csproj" />
   </ItemGroup>
 
 
