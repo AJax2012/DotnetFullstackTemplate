@@ -2,9 +2,9 @@
 using Moq;
 using NUnit.Framework;
 using SourceName.Api.Core.Authentication;
-using SourceName.Api.Model.Configuration;
 using SourceName.Service.Model.Users;
 using SourceName.Service.Users;
+using SourceName.Utils.Configuration;
 
 namespace SourceName.Api.Test.Users
 {

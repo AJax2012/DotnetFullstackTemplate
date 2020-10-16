@@ -22,7 +22,7 @@ namespace SourceName.Data.Implementation.User
             _context.SaveChanges();
         }
 
-        public override IEnumerable<UserEntity> Get(Expression<Func<UserEntity, bool>> filter = null)
+        public IEnumerable<UserEntity> Get(Expression<Func<UserEntity, bool>> filter = null)
         {
             var query = _context.Set<UserEntity>()
                 .Include(u => u.Roles)

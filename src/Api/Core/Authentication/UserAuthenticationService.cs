@@ -7,9 +7,8 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-using SourceName.Api.Model.Configuration;
 using SourceName.Service.Users;
-
+using SourceName.Utils.Configuration;
 
 namespace SourceName.Api.Core.Authentication
 {

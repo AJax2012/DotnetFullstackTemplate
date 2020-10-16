@@ -11,14 +11,9 @@
         #endregion
         #region DynamicStrings
 
-        public static string DynamicNotFoundError(string resource)
+        public static string GenericNotFoundError(string resource)
         {
             return $"Could not find {resource}.";
-        }
-
-        public static string DynamicUnsupportedMediaTypeError(string mediaType)
-        {
-            return $"{mediaType} not supported";
         }
         #endregion
     }

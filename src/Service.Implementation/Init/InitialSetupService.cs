@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using SourceName.Data.GenericRepositories;
+using SourceName.Data.Model;
 using SourceName.Data.Model.Role;
 using SourceName.Data.Roles;
 using SourceName.Service.Init;
@@ -56,7 +57,7 @@ namespace SourceName.Service.Implementation.Init
 
         public void InitialSetup()
         {
-            if (_roleRepository.Get().ToList().Any())
+            if (_roleRepository.GetEntities(new Query<RoleEntity>()).ToList().Any())
             {
                 return;
             }
