@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SourceName.Data.Model;
 using SourceName.Data.Model.Role;
 using SourceName.Data.Model.User;
 using SourceName.Service.Model.Roles;
@@ -18,6 +19,7 @@ namespace SourceName.Mapping
             CreateMap<RoleEntity, Role>().ReverseMap();
             CreateMap<UserEntity, User>().ReverseMap();
             CreateMap<UserRoleEntity, UserRole>().ReverseMap();
+            CreateMap(typeof(PaginatedResult<>), typeof(PaginatedResult<>));
         }
     }
 }

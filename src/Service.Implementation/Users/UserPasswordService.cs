@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using SourceName.Service.Users;
+using SourceName.Utils;
 
 namespace SourceName.Service.Implementation.Users
 {
@@ -10,7 +11,7 @@ namespace SourceName.Service.Implementation.Users
         {
             if (string.IsNullOrWhiteSpace(password))
             {
-                throw new ArgumentException("Value cannot be empty or whitespace", nameof(password));
+                throw new ArgumentException(PasswordValidationError.EmptyWhiteSpace.ToString(), nameof(password));
             }
 
             using (var hmac = new System.Security.Cryptography.HMACSHA512())
@@ -24,17 +25,17 @@ namespace SourceName.Service.Implementation.Users
         {
             if (string.IsNullOrWhiteSpace(password))
             {
-                throw new ArgumentException("Value cannot be empty or whitespace", nameof(password));
+                throw new ArgumentException(PasswordValidationError.EmptyWhiteSpace.ToString(), nameof(password));
             }
 
             if (passwordHash.Length != 64)
             {
-                throw new ArgumentException("Expected 64-byte password hash", nameof(passwordHash));
+                throw new ArgumentException(PasswordValidationError.Expected64ByteHash.ToString(), nameof(passwordHash));
             }
 
             if (passwordSalt.Length != 128)
             {
-                throw new ArgumentException("Expected 128-byte password salt", nameof(passwordSalt));
+                throw new ArgumentException(PasswordValidationError.Expected128ByteSalt.ToString(), nameof(passwordSalt));
             }
 
             using (var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))

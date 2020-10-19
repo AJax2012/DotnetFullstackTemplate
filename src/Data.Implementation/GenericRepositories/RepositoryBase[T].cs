@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SourceName.Data.GenericRepositories;
 using SourceName.Data.Model;
@@ -90,81 +89,46 @@ namespace SourceName.Data.Implementation.GenericRepositories
             };
         }
 
-        public async Task<TEntity> GetEntityAsync(object id, bool trackEntity = true)
+        public virtual async Task<TEntity> GetEntityAsync(Expression<Func<TEntity, bool>> where = null, bool trackEntity = true)
         {
-            var entity = await _context.FindAsync(typeof(TEntity), id);
+            var entity = await _context.Set<TEntity>().FirstOrDefaultAsync(where);
             if (entity != null)
             {
                 if (!trackEntity)
                 {
                     _context.Entry(entity).State = EntityState.Detached;
                 }
-                return (TEntity)entity;
             }
-            return null;
+            return entity;
         }
 
-        public async Task<TEntity> GetEntityFirstOrDefaultAsync(Expression<Func<TEntity, bool>> filter, IList<Expression<Func<TEntity, object>>> includeProperties = null)
+        public virtual async Task<TEntity> GetEntityFirstOrDefaultAsync(Query<TEntity> request)
         {
             var query = _context.Set<TEntity>().AsQueryable();
 
-            if (includeProperties != null)
+            if (request.IncludeProperties != null)
             {
-                foreach (var prop in includeProperties)
+                foreach (var prop in request.IncludeProperties)
                 {
                     query = query.Include(prop);
                 }
             }
 
-            return await query.FirstOrDefaultAsync(filter);
+            return await query.FirstOrDefaultAsync(request.Where);
         }
 
-        public virtual TEntity Insert(TEntity entity)
+        public virtual async Task<TEntity> InsertAsync(TEntity entity)
         {
-            _context.Set<TEntity>().Add(entity);
-            _context.SaveChanges();
+            await _context.Set<TEntity>().AddAsync(entity);
+            await _context.SaveChangesAsync();
             return entity;
         }
 
-        public virtual TEntity Update(TEntity entity)
+        public virtual async Task<TEntity> UpdateAsync(TEntity entity)
         {
             _context.Set<TEntity>().Update(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return entity;
-        }
-
-        protected virtual List<TEntity> ApplyPagingAndSorting(
-            List<TEntity> baseQuery,
-            int? limit,
-            int? offset,
-            string orderBy,
-            string orderDirection,
-            Dictionary<string, Func<TEntity, object>> orderBySelectors)
-        {
-            var query = baseQuery;
-            if (!string.IsNullOrWhiteSpace(orderBy) && orderBySelectors.ContainsKey(orderBy))
-            {
-                var orderBySelector = orderBySelectors[orderBy];
-                if (orderDirection.Equals("asc", StringComparison.OrdinalIgnoreCase))
-                {
-                    query = query.OrderBy(orderBySelector).ToList();
-                }
-                else
-                {
-                    query = query.OrderByDescending(orderBySelector).ToList();
-                }
-            }
-
-            if (offset.HasValue)
-            {
-                query = query.Skip(offset.Value).ToList();
-            }
-            if (limit.HasValue)
-            {
-                query = query.Take(limit.Value).ToList();
-            }
-
-            return query;
         }
     }
 }

@@ -2,11 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SourceName.Service.Users
 {
     public interface IUserValidationService
     {
-        public UserValidationResult ValidateUser(User user);
+        public Task<UserValidationResult> ValidateUserAsync(User user);
     }
 }

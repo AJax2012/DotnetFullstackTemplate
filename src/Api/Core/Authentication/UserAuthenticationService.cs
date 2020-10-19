@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -28,9 +29,9 @@ namespace SourceName.Api.Core.Authentication
             _userService = userService;
         }
 
-        public string Authenticate(string username, string password)
+        public async Task<string> AuthenticateAsync(string username, string password)
         {
-            var user = _userService.GetForAuthentication(username);
+            var user = await _userService.GetForAuthenticationAsync(username);
             if (user == null || !user.IsActive)
             {
                 return null;

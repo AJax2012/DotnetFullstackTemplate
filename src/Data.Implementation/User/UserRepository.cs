@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SourceName.Data.Implementation.GenericRepositories;
 using SourceName.Data.Model;
@@ -15,87 +14,98 @@ namespace SourceName.Data.Implementation.User
     {
         public UserRepository(EntityContext context) : base(context) {}
 
-        public override void Delete(int id)
+        public override async Task<bool> DeleteAsync(int id)
         {
-            var entity = _context.Set<UserEntity>().Single(u => u.Id == id);
+            var entity = await _context.Set<UserEntity>().FindAsync(id);
+
+            if (entity == null)
+            {
+                return false;
+            }
+
             entity.IsActive = false;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
-        public IEnumerable<UserEntity> Get(Expression<Func<UserEntity, bool>> filter = null)
+        public async Task<UserEntity> GetByIdWithRolesAsync(int id)
         {
-            var query = _context.Set<UserEntity>()
+            return await _context.Users
                 .Include(u => u.Roles)
                 .Include("Roles.Role")
-                .AsQueryable();
-
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-
-            return query;
+                .SingleOrDefaultAsync(user => user.Id == id && user.IsActive == true);
         }
 
-        public override UserEntity GetById(int id)
+        public async Task<UserEntity> GetByUsernameWithRolesAsync(string username)
         {
-            return _context.Set<UserEntity>()
+            return await _context.Users
                 .Include(u => u.Roles)
                 .Include("Roles.Role")
-                .SingleOrDefault(u => u.Id == id);
+                .SingleOrDefaultAsync(user => user.Username == username && user.IsActive == true);
         }
 
-        public UserEntity GetByUsernameWithRoles(string username)
+        public override async Task<UserEntity> UpdateAsync(UserEntity user)
         {
-            return _context.Users
+            var userEntity = await _context.Set<UserEntity>()
                 .Include(u => u.Roles)
-                .Include("Roles.Role")
-                .SingleOrDefault(user => user.Username == username);
-        }
+                .SingleOrDefaultAsync(u => u.Id == user.Id);
 
-        public override UserEntity Update(UserEntity inputUser)
-        {
-            var userEntity = _context.Set<UserEntity>()
-                .Include(u => u.Roles)
-                .Include("Roles.Role")
-                .Single(u => u.Id == inputUser.Id);
+            userEntity.FirstName = user.FirstName;
+            userEntity.LastName = user.LastName;
+            userEntity.Username = user.Username;
 
-            var rolesToRemove = userEntity.Roles.Where(
-                existingRole =>
-                    !inputUser.Roles.Any(role => existingRole.RoleId == role.RoleId));
-            foreach (var roleToRemove in rolesToRemove)
-            {
-                _context.Set<UserRoleEntity>().Remove(roleToRemove);
-            }
-
-            var rolesToAdd = inputUser.Roles.Where(
-                newRole =>
-                    !userEntity.Roles.Any(existingRole => existingRole.RoleId == newRole.RoleId));
-            foreach (var roleToAdd in rolesToAdd)
-            {
-                userEntity.Roles.Add(new UserRoleEntity
-                {
-                    UserId = inputUser.Id,
-                    RoleId = roleToAdd.RoleId
-                });
-            }
-
-            userEntity.FirstName = inputUser.FirstName;
-            userEntity.LastName = inputUser.LastName;
-            userEntity.Username = inputUser.Username;
-
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return userEntity;
         }
 
-        public UserEntity UpdatePassword(int? id, byte[] passwordHash, byte[] passwordSalt)
+        public async Task AddUserRolesAsync(IEnumerable<UserRoleEntity> rolesToAdd)
         {
-            var userEntity = _context.Users.Single(user => user.Id == id);
+            //var rolesToRemove = _context.Set<UserRoleEntity>()
+            //    .Where(ur => ur.UserId == userId && roleIdsToRemove.Contains(ur.RoleId));
+
+            //if (rolesToRemove.Any())
+            //{
+            //    _context.RemoveRange(rolesToRemove);
+            //}
+
+            //var rolesToAdd = roleIdsToAdd.Select(r => new UserRoleEntity
+            //{
+            //    UserId = userId,
+            //    RoleId = r
+            //});
+
+            if (rolesToAdd.Any())
+            {
+                await _context.Set<UserRoleEntity>().AddRangeAsync(rolesToAdd);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveUserRolesAsync(IEnumerable<UserRoleEntity> rolesToRemove)
+        {
+            if (rolesToRemove.Any())
+            {
+                _context.Set<UserRoleEntity>().RemoveRange(rolesToRemove);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<UserEntity> UpdatePasswordAsync(int? id, byte[] passwordHash, byte[] passwordSalt)
+        {
+            var userEntity = await _context.Users.SingleOrDefaultAsync(user => user.Id == id);
+
+            if (userEntity == null)
+            {
+                return null;
+            }
 
             userEntity.PasswordHash = passwordHash;
             userEntity.PasswordSalt = passwordSalt;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return userEntity;
         }
     }

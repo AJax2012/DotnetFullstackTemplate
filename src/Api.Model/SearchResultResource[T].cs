@@ -5,6 +5,6 @@ namespace SourceName.Api.Model
     public class SearchResultResource<TResource>
     {
         public int TotalCount { get; set; }
-        public List<TResource> Results { get; set; }
+        public IEnumerable<TResource> Data { get; set; }
     }
 }

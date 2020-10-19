@@ -8,4 +8,8 @@
     <ProjectReference Include="..\Data.Model\SourceName.Data.Model.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Roles\" />
+  </ItemGroup>
+
 </Project>

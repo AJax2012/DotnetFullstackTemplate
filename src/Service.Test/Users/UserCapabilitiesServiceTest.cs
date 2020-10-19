@@ -7,6 +7,7 @@ using SourceName.Service.Users;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SourceName.Service.Implementation.Test.Users
 {
@@ -24,12 +25,12 @@ namespace SourceName.Service.Implementation.Test.Users
         }
 
         [Test]
-        public void GetUserCapabilities_Calls_UserService_GetById()
+        public async Task GetUserCapabilities_Calls_UserService_GetById()
         {
             var userId = 1;
-            mockUserService.Setup(s => s.GetById(It.IsAny<int>())).Returns(new User());
-            userCapabilitiesService.GetUserCapabilities(userId);
-            mockUserService.Verify(s => s.GetById(userId), Times.Once);
+            mockUserService.Setup(s => s.GetByIdWithRolesAsync(It.IsAny<int>())).ReturnsAsync(new User());
+            await userCapabilitiesService.GetUserCapabilitiesAsync(userId);
+            mockUserService.Verify(s => s.GetByIdWithRolesAsync(userId), Times.Once);
         }
 
         /*
@@ -39,16 +40,16 @@ namespace SourceName.Service.Implementation.Test.Users
         [Test]
         [TestCase(Roles.Administrator, true)]
         [TestCase(Roles.User, false)]
-        public void GetUserCapabilities_Returns_UserCapabilities_With_Expected_CanManageUsers_Property(Roles role, bool expectedResult)
+        public async Task GetUserCapabilities_Returns_UserCapabilities_With_Expected_CanManageUsers_Property(Roles role, bool expectedResult)
         {
             var user = new User 
             {
                 Roles = new List<UserRole> { new UserRole { RoleId = (int)role } }
             };
 
-            mockUserService.Setup(s => s.GetById(It.IsAny<int>())).Returns(user);
+            mockUserService.Setup(s => s.GetByIdWithRolesAsync(It.IsAny<int>())).ReturnsAsync(user);
 
-            var actualResult = userCapabilitiesService.GetUserCapabilities(new int());
+            var actualResult = await userCapabilitiesService.GetUserCapabilitiesAsync(new int());
 
             Assert.IsNotNull(actualResult);
             Assert.AreEqual(expectedResult, actualResult.CanManageUsers);

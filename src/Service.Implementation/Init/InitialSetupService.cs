@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using AutoMapper;
-using SourceName.Data.GenericRepositories;
-using SourceName.Data.Model;
 using SourceName.Data.Model.Role;
 using SourceName.Data.Roles;
 using SourceName.Service.Init;
@@ -57,19 +54,15 @@ namespace SourceName.Service.Implementation.Init
 
         public void InitialSetup()
         {
-            if (_roleRepository.GetEntities(new Query<RoleEntity>()).ToList().Any())
+            if (_roleRepository.GetRoleCount() > 0)
             {
                 return;
             }
 
             //TODO: Eventually, log if the amount of Roles in the DB != amount of roles in Roles Enum
 
-            foreach (var role in _roles)
-            {
-                _roleRepository.Insert(_mapper.Map<RoleEntity>(role));
-            }
-
-            _userService.CreateUser(_adminUser);
+            _roleRepository.InsertRoles(_mapper.Map<IEnumerable<RoleEntity>>(_roles));
+            _userService.CreateUserAsync(_adminUser).Wait();
         }
     }
 }

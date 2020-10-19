@@ -13,4 +13,8 @@
     <ProjectReference Include="..\Data\SourceName.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Role\" />
+  </ItemGroup>
+
 </Project>

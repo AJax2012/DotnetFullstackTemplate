@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using SourceName.Service.Model.Roles;
 using SourceName.Service.Model.Users;
 using SourceName.Service.Users;
@@ -21,9 +22,9 @@ namespace SourceName.Service.Implementation.Users
             _userService = userService;
         }
 
-        public UserCapabilities GetUserCapabilities(int userId)
+        public async Task<UserCapabilities> GetUserCapabilitiesAsync(int userId)
         {
-            var user = _userService.GetById(userId);
+            var user = await _userService.GetByIdWithRolesAsync(userId);
             return new UserCapabilities
             {
                 CanManageUsers = GetCanManageUsers(user)

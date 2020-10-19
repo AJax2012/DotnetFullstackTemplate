@@ -1,5 +1,7 @@
 ﻿using SourceName.Service.Model.Users;
 using SourceName.Service.Users;
+using SourceName.Utils;
+using System.Threading.Tasks;
 
 namespace SourceName.Service.Implementation.Users
 {
@@ -14,14 +16,14 @@ namespace SourceName.Service.Implementation.Users
             _userPasswordValidationService = userPasswordValidationService;
         }
 
-        public UserValidationResult ValidateUser(User user)
+        public async Task<UserValidationResult> ValidateUserAsync(User user)
         {
             var result = new UserValidationResult();
             result.Errors.AddRange(_userPasswordValidationService.Validate(user.Password).Errors);
 
-            if (_userService.GetByUsername(user.Username) != null)
+            if (await _userService.GetByUsernameAsync(user.Username) != null)
             {
-                result.Errors.Add("Email Already Exists");
+                result.Errors.Add(UserError.EmailExists.ToString());
             }
 
             return result;

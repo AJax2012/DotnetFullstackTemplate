@@ -1,7 +1,9 @@
-﻿namespace SourceName.Api.Core.Authentication
+﻿using System.Threading.Tasks;
+
+namespace SourceName.Api.Core.Authentication
 {
     public interface IUserAuthenticationService
     {
-        string Authenticate(string username, string password);
+        Task<string> AuthenticateAsync(string username, string password);
     }
 }

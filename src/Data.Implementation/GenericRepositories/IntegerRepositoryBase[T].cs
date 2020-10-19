@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using SourceName.Data.GenericRepositories;
 using SourceName.Data.Model;
 
@@ -9,16 +10,24 @@ namespace SourceName.Data.Implementation.GenericRepositories
     {
         protected IntegerRepositoryBase(EntityContext context) : base(context) {}
 
-        public virtual void Delete(int id)
+        public virtual async Task<bool> DeleteAsync(int id)
         {
-            var entity = _context.Set<TEntity>().Single(x => x.Id == id);
+            var entity = await _context.Set<TEntity>().FindAsync(id);
+
+            if (entity == null)
+            {
+                return false;
+            }
+
             _context.Set<TEntity>().Remove(entity);
             _context.SaveChanges();
+
+            return true;
         }
 
-        public virtual TEntity GetById(int id)
+        public virtual async Task<TEntity> GetByIdAsync(int id)
         {
-            return _context.Set<TEntity>().SingleOrDefault(x => x.Id == id);
+            return await _context.Set<TEntity>().FindAsync(id);
         }
     }
 }

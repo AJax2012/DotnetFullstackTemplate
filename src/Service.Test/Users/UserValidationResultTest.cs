@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SourceName.Service.Test.Users
 {
@@ -26,39 +27,39 @@ namespace SourceName.Service.Test.Users
         }
 
         [Test]
-        public void ValidateUser_Calls_UserPasswordValidationService_Validate()
+        public async Task ValidateUser_Calls_UserPasswordValidationService_Validate()
         {
             var password = "test";
             mockUserPasswordValidationService.Setup(s => s.Validate(It.IsAny<string>())).Returns(new PasswordValidationResult());
-            userValidationService.ValidateUser(new User { Password = password });
+            await userValidationService.ValidateUserAsync(new User { Password = password });
             mockUserPasswordValidationService.Verify(s => s.Validate(password), Times.Once);
         }
 
         [Test]
-        public void ValidateUser_Calls_UserService_GetByEmailAddress()
+        public async Task ValidateUser_Calls_UserService_GetByEmailAddress()
         {
             var password = "test";
             var username = "testUsername";
             mockUserPasswordValidationService.Setup(s => s.Validate(It.IsAny<string>())).Returns(new PasswordValidationResult());
-            userValidationService.ValidateUser(new User { Password = password, Username = username });
-            mockUserService.Verify(s => s.GetByUsername(username), Times.Once);
+            await userValidationService.ValidateUserAsync(new User { Password = password, Username = username });
+            mockUserService.Verify(s => s.GetByUsernameAsync(username), Times.Once);
         }
 
         [Test]
-        public void ValidateUser_Returns_Valid_UserValidationResult_If_No_Errors()
+        public async Task ValidateUser_Returns_Valid_UserValidationResult_If_No_Errors()
         {
             var password = "test";
             var username = "testUsername";
 
             mockUserPasswordValidationService.Setup(s => s.Validate(It.IsAny<string>())).Returns(new PasswordValidationResult());
-            var actual = userValidationService.ValidateUser(new User { Password = password, Username = username });
+            var actual = await userValidationService.ValidateUserAsync(new User { Password = password, Username = username });
 
             Assert.IsFalse(actual.Errors.Any());
             Assert.IsTrue(actual.IsValid);
         }
 
         [Test]
-        public void ValidateUser_Returns_InValid_UserValidationResult_If_Password_Invalid()
+        public async Task ValidateUser_Returns_InValid_UserValidationResult_If_Password_Invalid()
         {
             var password = "test";
             var username = "testusername";
@@ -70,7 +71,7 @@ namespace SourceName.Service.Test.Users
 
             mockUserPasswordValidationService.Setup(s => s.Validate(It.IsAny<string>())).Returns(passwordErrors);
 
-            var actual = userValidationService.ValidateUser(new User { Password = password, Username = username });
+            var actual = await userValidationService.ValidateUserAsync(new User { Password = password, Username = username });
 
             Assert.IsTrue(actual.Errors.Any());
             Assert.IsFalse(actual.IsValid);
@@ -78,7 +79,7 @@ namespace SourceName.Service.Test.Users
         }
 
         [Test]
-        public void ValidateUser_Returns_InValid_UserValidationResult_If_User_Exists()
+        public async Task ValidateUser_Returns_InValid_UserValidationResult_If_User_Exists()
         {
             var password = "test";
             var username = "testUsername";
@@ -87,9 +88,9 @@ namespace SourceName.Service.Test.Users
             expectedResult.Errors.Add(errorMessage);
 
             mockUserPasswordValidationService.Setup(s => s.Validate(It.IsAny<string>())).Returns(new PasswordValidationResult());
-            mockUserService.Setup(s => s.GetByUsername(It.IsAny<string>())).Returns(new User());
+            mockUserService.Setup(s => s.GetByUsernameAsync(It.IsAny<string>())).ReturnsAsync(new User());
 
-            var actual = userValidationService.ValidateUser(new User { Password = password, Username = username });
+            var actual = await userValidationService.ValidateUserAsync(new User { Password = password, Username = username });
 
             Assert.IsTrue(actual.Errors.Any());
             Assert.IsFalse(actual.IsValid);

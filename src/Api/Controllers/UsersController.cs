@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SourceName.Api.Core.Authentication;
+using SourceName.Api.Model;
 using SourceName.Api.Model.User;
 using SourceName.Service.Model.Users;
 using SourceName.Service.Users;
@@ -46,9 +48,9 @@ namespace SourceName.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody] AuthenticateUserRequest request)
+        public async Task<IActionResult> AuthenticateAsync([FromBody] AuthenticateUserRequest request)
         {
-            var token = _userAuthenticationService.Authenticate(request.Username, request.Password);
+            var token = await _userAuthenticationService.AuthenticateAsync(request.Username, request.Password);
 
             if (string.IsNullOrWhiteSpace(token))
             {
@@ -56,7 +58,7 @@ namespace SourceName.Api.Controllers
                 return Unauthorized();
             }
 
-            var user = _userService.GetByUsername(request.Username);
+            var user = await _userService.GetByUsernameAsync(request.Username);
 
             return Ok(new AuthenticateUserResponse
             {
@@ -68,17 +70,17 @@ namespace SourceName.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public IActionResult Register([FromBody] CreateUserRequest request)
+        public async Task<IActionResult> RegisterAsync([FromBody] CreateUserRequest request)
         {
             var user = _mapper.Map<User>(request);
-            var validationObject = _userValidationService.ValidateUser(user);
+            var validationObject = await _userValidationService.ValidateUserAsync(user);
 
             if (!validationObject.IsValid)
             {
                 return Ok(validationObject);
             }
 
-            var newUser = _userService.CreateUser(_mapper.Map<User>(request));
+            var newUser = await _userService.CreateUserAsync(_mapper.Map<User>(request));
             _logger.LogInformation($"New User being created: {newUser.Id}");
 
             var response = new CreateUserResponse
@@ -87,32 +89,39 @@ namespace SourceName.Api.Controllers
                 UserResource = _mapper.Map<UserResource>(newUser)
             };
 
-            return CreatedAtAction(nameof(Authenticate), response);
+            return CreatedAtAction(nameof(AuthenticateAsync), response);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteUser([FromRoute] int id)
+        public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
-            if (_userService.GetById(id) == null)
+            if (await _userService.GetByIdAsync(id) == null)
             {
                 return NotFound();
             }
 
             _logger.LogInformation($"User {id} is being deleted.");
-            _userService.DeleteUser(id);
+            var result = await _userService.DeleteUserAsync(id);
+
+            if (!result)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError);
+            }
+
             return NoContent();
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll(int pageNumber = 0, int resultsPerPage = 10, bool removeInactive = true)
         {
-            return Ok(_mapper.Map<List<UserResource>>(_userService.GetAll()));
+            var results = _mapper.Map <SearchResultResource<UserResource>>(await _userService.GetAllPaginatedAsync(pageNumber, resultsPerPage, removeInactive));
+            return Ok(results);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById([FromRoute] int id)
+        public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var user = _userService.GetById(id);
+            var user = await _userService.GetByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
@@ -121,16 +130,16 @@ namespace SourceName.Api.Controllers
         }
 
         [HttpGet("capabilities")]
-        public IActionResult GetUserCapabilities()
+        public async Task<IActionResult> GetUserCapabilities()
         {
-            var capabilities = _userCapabilitiesService.GetUserCapabilities(_userContextService.UserId.Value);
+            var capabilities = await _userCapabilitiesService.GetUserCapabilitiesAsync(_userContextService.UserId.Value);
             return Ok(_mapper.Map<UserCapabilitiesResource>(capabilities));
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateUser([FromRoute] int id, [FromBody] UpdateUserRequest request)
+        public async Task<IActionResult> UpdateUser([FromRoute] int id, [FromBody] UpdateUserRequest request)
         {
-            if (_userService.GetById(id) == null)
+            if (await _userService.GetByIdAsync(id) == null)
             {
                 return NotFound();
             }
@@ -138,11 +147,17 @@ namespace SourceName.Api.Controllers
             _logger.LogInformation($"User is being updated: {id}");
             var user = _mapper.Map<User>(request);
             user.Id = id;
-            return Ok(_mapper.Map<UserResource>(_userService.UpdateUser(user)));
+            return Ok(_mapper.Map<UserResource>(await _userService.UpdateUserAsync(user)));
+        }
+
+        [HttpPatch("{id}/roles")]
+        public async Task<IActionResult> UpdateUserRoles([FromRoute] int id, [FromBody] List<int> roleIds)
+        {
+            return Ok(_mapper.Map<UserResource>(await _userService.UpdateUserRolesAsync(id, roleIds)));
         }
 
         [HttpPatch("{id}/password")]
-        public IActionResult UpdatePassword([FromRoute] int id, [FromBody] UpdatePasswordRequest request)
+        public async Task<IActionResult> UpdatePassword([FromRoute] int id, [FromBody] UpdatePasswordRequest request)
         {
             var validationObject = _userPasswordValidationService.Validate(request.Password);
 
@@ -151,14 +166,14 @@ namespace SourceName.Api.Controllers
                 return BadRequest(validationObject);
             }
 
-            if (_userService.GetById(id) == null)
+            if (await _userService.GetByIdAsync(id) == null)
             {
                 return NotFound();
             }
 
             _logger.LogInformation($"User {id} is updating their password.");
             return Ok(_mapper.Map<UserResource>(
-                _userService.UpdateUserPassword(id, request.Password)));
+                await _userService.UpdateUserPasswordAsync(id, request.Password)));
         }
     }
 }
