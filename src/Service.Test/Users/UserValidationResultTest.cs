@@ -3,10 +3,9 @@ using NUnit.Framework;
 using SourceName.Service.Implementation.Users;
 using SourceName.Service.Model.Users;
 using SourceName.Service.Users;
-using System;
-using System.Collections.Generic;
+using SourceName.Utils;
+using SourceName.Utils.Constants;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SourceName.Service.Test.Users
@@ -83,7 +82,7 @@ namespace SourceName.Service.Test.Users
         {
             var password = "test";
             var username = "testUsername";
-            var errorMessage = "Email Already Exists";
+            var errorMessage = ErrorStringProvider.UserErrorToString(UserError.EmailExists);
             var expectedResult = new UserValidationResult();
             expectedResult.Errors.Add(errorMessage);
 

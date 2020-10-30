@@ -3,7 +3,7 @@ using AutoMapper;
 using SourceName.Api.Model;
 using SourceName.Api.Model.Roles;
 using SourceName.Api.Model.User;
-using SourceName.Data.Model;
+using SourceName.Service.Model;
 using SourceName.Service.Model.Roles;
 using SourceName.Service.Model.Users;
 
@@ -51,7 +51,7 @@ namespace SourceName.Mapping
                         source => source.Role.Description));
 
             CreateMap<Role, RoleResource>();
-            CreateMap(typeof(PaginatedResult<>), typeof(SearchResultResource<>));
+            CreateMap(typeof(SearchResult<>), typeof(SearchResultResource<>));
         }
     }
 }

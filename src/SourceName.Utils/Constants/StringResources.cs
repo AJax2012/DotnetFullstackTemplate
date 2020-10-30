@@ -1,6 +1,6 @@
 ﻿namespace SourceName.Utils.Constants
 {
-    public static class StringUtils
+    public static class StringResources
     {
         #region StaticStrings
         public static string GenericDatabaseError = "Encountered an error when connecting to the database. Please try again.";

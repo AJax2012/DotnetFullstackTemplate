@@ -5,6 +5,6 @@ namespace SourceName.Service.Model
     public class SearchResult<TModel>
     {
         public int TotalCount { get; set; }
-        public List<TModel> Results { get; set; }
+        public List<TModel> Data { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace SourceName.Api.Model.User
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Username { get; set; }
-        public IEnumerable<RoleResource> Roles { get; set; }
+        public List<RoleResource> Roles { get; set; }
         public bool IsActive { get; set; }
     }
 }

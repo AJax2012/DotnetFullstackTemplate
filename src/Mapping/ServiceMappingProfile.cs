@@ -2,6 +2,7 @@
 using SourceName.Data.Model;
 using SourceName.Data.Model.Role;
 using SourceName.Data.Model.User;
+using SourceName.Service.Model;
 using SourceName.Service.Model.Roles;
 using SourceName.Service.Model.Users;
 
@@ -19,7 +20,7 @@ namespace SourceName.Mapping
             CreateMap<RoleEntity, Role>().ReverseMap();
             CreateMap<UserEntity, User>().ReverseMap();
             CreateMap<UserRoleEntity, UserRole>().ReverseMap();
-            CreateMap(typeof(PaginatedResult<>), typeof(PaginatedResult<>));
+            CreateMap(typeof(PaginatedResult<>), typeof(SearchResult<>));
         }
     }
 }

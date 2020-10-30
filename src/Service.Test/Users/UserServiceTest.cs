@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SourceName.Data.Model;
 using SourceName.Data.Model.Role;
+using SourceName.Service.Model;
 
 namespace SourceName.Service.Implementation.Test.Users
 {
@@ -101,17 +102,17 @@ namespace SourceName.Service.Implementation.Test.Users
 
             mockUserRepository.Setup(r => r.GetPaginatedEntitiesAsync(It.IsAny<PagingatedQuery<UserEntity>>())).ReturnsAsync(expectedResult);
             await userService.GetAllPaginatedAsync();
-            mockMapper.Verify(r => r.Map<PaginatedResult<User>>(It.Is<PaginatedResult<UserEntity>>(list => list.Data.First() == user)), Times.Once);
+            mockMapper.Verify(r => r.Map<SearchResult<User>>(It.Is<PaginatedResult<UserEntity>>(list => list.Data.First() == user)), Times.Once);
         }
 
         [Test]
         public async Task GetAll_Returns_Expected_User_List()
         {
             var userList = new List<User> { new User() };
-            var expectedResult = new PaginatedResult<User> { Data = userList, TotalCount = userList.Count };
+            var expectedResult = new SearchResult<User> { Data = userList, TotalCount = userList.Count };
 
             mockUserRepository.Setup(r => r.GetPaginatedEntitiesAsync(It.IsAny<PagingatedQuery<UserEntity>>())).ReturnsAsync(new PaginatedResult<UserEntity>());
-            mockMapper.Setup(m => m.Map<PaginatedResult<User>>(It.IsAny<PaginatedResult<UserEntity>>())).Returns(expectedResult);
+            mockMapper.Setup(m => m.Map<SearchResult<User>>(It.IsAny<PaginatedResult<UserEntity>>())).Returns(expectedResult);
 
             var result = await userService.GetAllPaginatedAsync();
 

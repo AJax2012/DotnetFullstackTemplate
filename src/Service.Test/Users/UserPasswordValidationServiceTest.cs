@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using SourceName.Service.Implementation.Users;
+using SourceName.Utils;
+using SourceName.Utils.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +34,7 @@ namespace SourceName.Service.Implementation.Test.Users
             var password = "";
             var expectedErrors = new List<string> 
             { 
-                "Value cannot be empty or whitespace"
+                ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.EmptyWhiteSpace)
             };
 
             var result = userPasswordValidationService.Validate(password);
@@ -48,7 +50,7 @@ namespace SourceName.Service.Implementation.Test.Users
             var password = "   ";
             var expectedErrors = new List<string>
             {
-                "Value cannot be empty or whitespace"
+                ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.EmptyWhiteSpace)
             };
 
             var result = userPasswordValidationService.Validate(password);
@@ -64,7 +66,7 @@ namespace SourceName.Service.Implementation.Test.Users
             var password = "test1";
             var expectedErrors = new List<string>
             {
-                "Password must contain at least one upper case and lower case letter"
+                ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.UpperAndLower)
             };
 
             var result = userPasswordValidationService.Validate(password);
@@ -80,7 +82,7 @@ namespace SourceName.Service.Implementation.Test.Users
             var password = "Test";
             var expectedErrors = new List<string>
             {
-                "Password must contain at least one letter and one number"
+                ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.LetterAndNumber)
             };
 
             var result = userPasswordValidationService.Validate(password);
@@ -96,8 +98,8 @@ namespace SourceName.Service.Implementation.Test.Users
             var password = "test";
             var expectedErrors = new List<string>
             {
-                "Password must contain at least one upper case and lower case letter",
-                "Password must contain at least one letter and one number",
+                ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.UpperAndLower),
+                ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.LetterAndNumber)
             };
 
             var result = userPasswordValidationService.Validate(password);

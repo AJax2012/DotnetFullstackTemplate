@@ -20,6 +20,7 @@
     <ProjectReference Include="..\Service.Implementation\SourceName.Service.Implementation.csproj" />
     <ProjectReference Include="..\Service.Model\SourceName.Service.Model.csproj" />
     <ProjectReference Include="..\Service\SourceName.Service.csproj" />
+    <ProjectReference Include="..\SourceName.Utils\SourceName.Utils.csproj" />
   </ItemGroup>
 
 </Project>

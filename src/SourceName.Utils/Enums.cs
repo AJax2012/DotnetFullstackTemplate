@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-
-namespace SourceName.Utils
+﻿namespace SourceName.Utils
 {
     public enum ResponseType
     {
@@ -20,28 +14,16 @@ namespace SourceName.Utils
 
     public enum UserError
     {
-        [Description("Email Already Exists")]
         EmailExists
     }
 
     public enum PasswordValidationError
     {
-        [Description("Value cannot be empty or whitespace")]
         EmptyWhiteSpace,
-
-        [Description("Password must be between 6 and 20 characters in length")]
         PasswordLength,
-
-        [Description("Password must contain at least one letter and one number")]
         LetterAndNumber,
-
-        [Description("Password must contain at least one upper case and lower case letter")]
         UpperAndLower,
-
-        [Description("Expected 64-byte password hash")]
         Expected64ByteHash,
-
-        [Description("Expected 128-byte password salt")]
         Expected128ByteSalt
     }
 }

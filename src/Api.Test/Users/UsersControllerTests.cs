@@ -14,6 +14,7 @@ using System;
 using System.Threading.Tasks;
 using SourceName.Data.Model;
 using SourceName.Api.Model;
+using SourceName.Service.Model;
 
 namespace SourceName.Api.Test.Users
 {
@@ -317,18 +318,18 @@ namespace SourceName.Api.Test.Users
         [Test]
         public async Task GetAll_Maps_To_UserResource()
         {
-            var users = new PaginatedResult<User>();
+            var users = new SearchResult<User>();
 
             mockUserService.Setup(s => s.GetAllPaginatedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(users);
             await usersController.GetAll();
 
-            mockMapper.Verify(m => m.Map<SearchResultResource<UserResource>>(It.Is<PaginatedResult<User>>(u => u == users)));
+            mockMapper.Verify(m => m.Map<SearchResultResource<UserResource>>(It.Is<SearchResult<User>>(u => u == users)));
         }
 
         [Test]
         public async Task GetAll_Returns_Ok_Object_Result()
         {
-            mockUserService.Setup(s => s.GetAllPaginatedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(new PaginatedResult<User>());
+            mockUserService.Setup(s => s.GetAllPaginatedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(new SearchResult<User>());
 
             var result = await usersController.GetAll() as OkObjectResult;
 
@@ -343,9 +344,9 @@ namespace SourceName.Api.Test.Users
             var userList = new List<UserResource> { user };
             var expectedResult = new SearchResultResource<UserResource> { Data = userList, TotalCount = userList.Count };
 
-            mockUserService.Setup(s => s.GetAllPaginatedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(new PaginatedResult<User>());
+            mockUserService.Setup(s => s.GetAllPaginatedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(new SearchResult<User>());
 
-            mockMapper.Setup(m => m.Map<SearchResultResource<UserResource>>(It.IsAny<PaginatedResult<User>>())).Returns(expectedResult);
+            mockMapper.Setup(m => m.Map<SearchResultResource<UserResource>>(It.IsAny<SearchResult<User>>())).Returns(expectedResult);
 
             var result = await usersController.GetAll() as OkObjectResult;
             var actual = result.Value as SearchResultResource<UserResource>;
@@ -361,9 +362,9 @@ namespace SourceName.Api.Test.Users
             var userList = new List<UserResource> { user };
             var resource = new SearchResultResource<UserResource> { Data = userList, TotalCount = userList.Count };
 
-            mockUserService.Setup(s => s.GetAllPaginatedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(new PaginatedResult<User>());
+            mockUserService.Setup(s => s.GetAllPaginatedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(new SearchResult<User>());
 
-            mockMapper.Setup(m => m.Map<SearchResultResource<UserResource>>(It.IsAny<PaginatedResult<User>>())).Returns(resource);
+            mockMapper.Setup(m => m.Map<SearchResultResource<UserResource>>(It.IsAny<SearchResult<User>>())).Returns(resource);
 
             var result = await usersController.GetAll() as OkObjectResult;
             var actual = result.Value as SearchResultResource<UserResource>;

@@ -14,6 +14,6 @@ namespace SourceName.Service.Model.Users
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
         public bool IsActive { get; set; }
-        public ICollection<UserRole> Roles { get; set; } = new List<UserRole>();
+        public List<UserRole> Roles { get; set; } = new List<UserRole>();
     }
 }

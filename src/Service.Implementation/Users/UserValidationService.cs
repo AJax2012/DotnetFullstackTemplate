@@ -1,6 +1,7 @@
 ﻿using SourceName.Service.Model.Users;
 using SourceName.Service.Users;
 using SourceName.Utils;
+using SourceName.Utils.Constants;
 using System.Threading.Tasks;
 
 namespace SourceName.Service.Implementation.Users
@@ -23,7 +24,7 @@ namespace SourceName.Service.Implementation.Users
 
             if (await _userService.GetByUsernameAsync(user.Username) != null)
             {
-                result.Errors.Add(UserError.EmailExists.ToString());
+                result.Errors.Add(ErrorStringProvider.UserErrorToString(UserError.EmailExists));
             }
 
             return result;

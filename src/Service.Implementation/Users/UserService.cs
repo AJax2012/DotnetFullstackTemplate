@@ -8,6 +8,7 @@ using SourceName.Data.Model;
 using SourceName.Data.Model.Role;
 using SourceName.Data.Model.User;
 using SourceName.Data.Users;
+using SourceName.Service.Model;
 using SourceName.Service.Model.Users;
 using SourceName.Service.Users;
 
@@ -59,7 +60,7 @@ namespace SourceName.Service.Implementation.Users
             return await _userRepository.DeleteAsync(id);
         }
 
-        public async Task<PaginatedResult<User>> GetAllPaginatedAsync(int pageNumber = 0, int resultsPerPage = 10, bool removeInactive = true)
+        public async Task<SearchResult<User>> GetAllPaginatedAsync(int pageNumber = 0, int resultsPerPage = 10, bool removeInactive = true)
         {
             Expression<Func<UserEntity, bool>> where = null;
             Expression<Func<UserEntity, object>> include = u => u.Roles;
@@ -79,7 +80,7 @@ namespace SourceName.Service.Implementation.Users
 
             var userEntities = await _userRepository.GetPaginatedEntitiesAsync(query);
 
-            return _mapper.Map<PaginatedResult<User>>(userEntities);
+            return _mapper.Map<SearchResult<User>>(userEntities);
         }
 
         public async Task<User> GetByIdAsync(int id)
