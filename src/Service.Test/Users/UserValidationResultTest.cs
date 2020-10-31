@@ -5,6 +5,7 @@ using SourceName.Service.Model.Users;
 using SourceName.Service.Users;
 using SourceName.Utils;
 using SourceName.Utils.Constants;
+using SourceName.Utils.Constants.EnumDescriptionProviders;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -82,7 +83,7 @@ namespace SourceName.Service.Test.Users
         {
             var password = "test";
             var username = "testUsername";
-            var errorMessage = ErrorStringProvider.UserErrorToString(UserError.EmailExists);
+            var errorMessage = UserError.EmailExists.ToDescriptionString();
             var expectedResult = new UserValidationResult();
             expectedResult.Errors.Add(errorMessage);
 

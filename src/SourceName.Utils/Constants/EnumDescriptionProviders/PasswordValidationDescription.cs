@@ -1,11 +1,11 @@
 ﻿using SourceName.Utils.Interfaces;
 using System;
 
-namespace SourceName.Utils.Constants
+namespace SourceName.Utils.Constants.EnumDescriptionProviders
 {
-    public static class ErrorStringProvider
+    public static class PasswordValidationDescription
     {
-        public static string PasswordValidationErrorToString(PasswordValidationError error)
+        public static string ToDescriptionString(this PasswordValidationError error)
         {
             return error switch
             {
@@ -16,15 +16,6 @@ namespace SourceName.Utils.Constants
                 PasswordValidationError.Expected64ByteHash => "Expected 64-byte password hash",
                 PasswordValidationError.Expected128ByteSalt => "Expected 128-byte password salt",
                 _ => throw new NotImplementedException(),
-            };
-        }
-
-        public static string UserErrorToString(UserError error)
-        {
-            return error switch
-            {
-                UserError.EmailExists => "Email Already Exists",
-                _ => throw new NotImplementedException()
             };
         }
     }

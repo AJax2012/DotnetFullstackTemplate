@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using SourceName.Service.Users;
 using SourceName.Utils;
-using SourceName.Utils.Constants;
-using SourceName.Utils.Interfaces;
+using SourceName.Utils.Constants.EnumDescriptionProviders;
 
 namespace SourceName.Service.Implementation.Users
 {
@@ -15,7 +13,7 @@ namespace SourceName.Service.Implementation.Users
             if (string.IsNullOrWhiteSpace(password))
             {
                 throw new ArgumentException(
-                    ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.EmptyWhiteSpace), 
+                    PasswordValidationError.EmptyWhiteSpace.ToDescriptionString(), 
                     nameof(password));
             }
 
@@ -31,21 +29,21 @@ namespace SourceName.Service.Implementation.Users
             if (string.IsNullOrWhiteSpace(password))
             {
                 throw new ArgumentException(
-                    ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.EmptyWhiteSpace), 
+                    PasswordValidationError.EmptyWhiteSpace.ToDescriptionString(), 
                     nameof(password));
             }
 
             if (passwordHash.Length != 64)
             {
                 throw new ArgumentException(
-                    ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.Expected64ByteHash), 
+                    PasswordValidationError.Expected64ByteHash.ToDescriptionString(), 
                     nameof(passwordHash));
             }
 
             if (passwordSalt.Length != 128)
             {
                 throw new ArgumentException(
-                    ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.Expected128ByteSalt), 
+                    PasswordValidationError.Expected128ByteSalt.ToDescriptionString(), 
                     nameof(passwordSalt));
             }
 

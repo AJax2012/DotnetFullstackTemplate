@@ -2,6 +2,7 @@
 using SourceName.Service.Users;
 using SourceName.Utils;
 using SourceName.Utils.Constants;
+using SourceName.Utils.Constants.EnumDescriptionProviders;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -12,10 +13,10 @@ namespace SourceName.Service.Implementation.Users
         private Dictionary<Regex, string> ValidationRules = new Dictionary<Regex, string>
         {
             { new Regex(@"[A-Za-z]+\d+.*"), 
-                ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.LetterAndNumber) },
+                PasswordValidationError.LetterAndNumber.ToDescriptionString() },
 
             { new Regex(@"(?=.*[a-z])(?=.*[A-Z]).*"), 
-                ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.UpperAndLower) }
+                PasswordValidationError.UpperAndLower.ToDescriptionString() }
         };
 
         public PasswordValidationResult Validate(string password)
@@ -24,7 +25,7 @@ namespace SourceName.Service.Implementation.Users
 
             if (string.IsNullOrWhiteSpace(password))
             {
-                result.Errors.Add(ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.EmptyWhiteSpace));
+                result.Errors.Add(PasswordValidationError.EmptyWhiteSpace.ToDescriptionString());
                 return result;
             }
 

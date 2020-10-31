@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using SourceName.Service.Implementation.Users;
 using SourceName.Utils;
-using SourceName.Utils.Constants;
+using SourceName.Utils.Constants.EnumDescriptionProviders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +34,7 @@ namespace SourceName.Service.Implementation.Test.Users
             var password = "";
             var expectedErrors = new List<string> 
             { 
-                ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.EmptyWhiteSpace)
+                PasswordValidationError.EmptyWhiteSpace.ToDescriptionString()
             };
 
             var result = userPasswordValidationService.Validate(password);
@@ -50,7 +50,7 @@ namespace SourceName.Service.Implementation.Test.Users
             var password = "   ";
             var expectedErrors = new List<string>
             {
-                ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.EmptyWhiteSpace)
+                PasswordValidationError.EmptyWhiteSpace.ToDescriptionString()
             };
 
             var result = userPasswordValidationService.Validate(password);
@@ -66,7 +66,7 @@ namespace SourceName.Service.Implementation.Test.Users
             var password = "test1";
             var expectedErrors = new List<string>
             {
-                ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.UpperAndLower)
+                PasswordValidationError.UpperAndLower.ToDescriptionString()
             };
 
             var result = userPasswordValidationService.Validate(password);
@@ -82,7 +82,7 @@ namespace SourceName.Service.Implementation.Test.Users
             var password = "Test";
             var expectedErrors = new List<string>
             {
-                ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.LetterAndNumber)
+                PasswordValidationError.LetterAndNumber.ToDescriptionString()
             };
 
             var result = userPasswordValidationService.Validate(password);
@@ -98,8 +98,8 @@ namespace SourceName.Service.Implementation.Test.Users
             var password = "test";
             var expectedErrors = new List<string>
             {
-                ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.UpperAndLower),
-                ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.LetterAndNumber)
+                PasswordValidationError.UpperAndLower.ToDescriptionString(),
+                PasswordValidationError.LetterAndNumber.ToDescriptionString()
             };
 
             var result = userPasswordValidationService.Validate(password);

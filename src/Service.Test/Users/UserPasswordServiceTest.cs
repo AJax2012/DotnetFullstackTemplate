@@ -1,13 +1,8 @@
-﻿using Moq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using SourceName.Service.Implementation.Users;
-using SourceName.Service.Users;
 using SourceName.Utils;
-using SourceName.Utils.Constants;
-using SourceName.Utils.Interfaces;
+using SourceName.Utils.Constants.EnumDescriptionProviders;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SourceName.Service.Implementation.Test.Users
 {
@@ -55,7 +50,7 @@ namespace SourceName.Service.Implementation.Test.Users
         public void CreateHash_Returns_ArgumentExceptionMessage_When_Not_Valid(string password)
         {
             var expectedExceptionMessage = new ArgumentException(
-                    ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.EmptyWhiteSpace),
+                    PasswordValidationError.EmptyWhiteSpace.ToDescriptionString(),
                     nameof(password));
             byte[] passwordHash;
             byte[] passwordSalt;
@@ -72,7 +67,7 @@ namespace SourceName.Service.Implementation.Test.Users
             var passwordHash = new byte[1];
             var passwordSalt = new byte[128];
             var expectedExceptionMessage = new ArgumentException(
-                ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.Expected64ByteHash), 
+                PasswordValidationError.Expected64ByteHash.ToDescriptionString(), 
                 nameof(passwordHash));
 
             var exception = Assert.Throws<ArgumentException>(() => userPasswordService.ValidateHash(password, passwordHash, passwordSalt)); ;
@@ -86,7 +81,7 @@ namespace SourceName.Service.Implementation.Test.Users
             var passwordHash = new byte[64];
             var passwordSalt = new byte[1];
             var expectedExceptionMessage = new ArgumentException(
-                ErrorStringProvider.PasswordValidationErrorToString(PasswordValidationError.Expected128ByteSalt), 
+                PasswordValidationError.Expected128ByteSalt.ToDescriptionString(), 
                 nameof(passwordSalt));
 
             var exception = Assert.Throws<ArgumentException>(() => userPasswordService.ValidateHash(password, passwordHash, passwordSalt));
